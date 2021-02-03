@@ -57,6 +57,13 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
         );
     }
 
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        super.attributeChangedCallback(name, oldValue, newValue);
+        console.log(`${name} changed from ${oldValue} to ${newValue}`);
+        this.refresh();
+    }
+
     get data() {
         return this.sequence;
     }

@@ -1,0 +1,36 @@
+{
+  "name": "ncats-protvista-viewer",
+  "description": "A collection of nightingale and custom components to show details of a protein sequence",
+  "version": "1.0.0",
+  "main": "dist/bundle.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "protvista-manager": "^3.0.0",
+    "protvista-navigation": "^3.0.0",
+    "protvista-zoomable": "^3.0.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.20.0",
+    "webpack-cli": "^4.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KeithKelleher/ncats-protvista-viewer.git"
+  },
+  "keywords": [
+    "ProtVista",
+    "UniProt",
+    "D3",
+    "NCATS",
+    "WebLogo"
+  ],
+  "author": "Keith Kelleher",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KeithKelleher/ncats-protvista-viewer/issues"
+  },
+  "homepage": "https://github.com/KeithKelleher/ncats-protvista-viewer#readme"
+}

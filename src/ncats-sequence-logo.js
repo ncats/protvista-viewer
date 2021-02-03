@@ -137,6 +137,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
         console.log('refreshing');
         if (this.axis) {
             console.log('in this.axis');
+            console.log(this.xScale);
             // const widthScale = 2;
             const ftWidth = this.getSingleBaseWidth();
             const opacity = ftWidth - 10;

@@ -9,7 +9,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     connectedCallback() {
         super.connectedCallback();
 
-        this.sequence = this.getAttribute("sequence");
+        this.sequence = JSON.parse(this.getAttribute("sequence"));
         if (this.sequence) {
             this._createSequence();
         }
@@ -61,11 +61,9 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback(name, oldValue, newValue);
         console.log(`${name} changed from ${oldValue} to ${newValue}`);
-        if(name === 'sequence'){
+        if (name === 'sequence') {
             this.sequence = newValue;
         }
-        console.log(this.sequence);
-        console.log(super.svg);
         if (this.sequence && !super.svg) {
             console.log('creating');
             this._createSequence();
@@ -129,15 +127,16 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
         this.trackHighlighter.appendHighlightTo(this.svg);
         this.refresh();
     }
-    standardOffset(){
+
+    standardOffset() {
         return 0.75 * this._height;
     }
+
     refresh() {
         // this._getCharSize();
         console.log('refreshing');
         if (this.axis) {
             console.log('in this.axis');
-            console.log(this.xScale());
             // const widthScale = 2;
             const ftWidth = this.getSingleBaseWidth();
             const opacity = 100;//ftWidth - 10;
@@ -147,67 +146,63 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 Math.min(this.sequence.length, this._displayend + 1)
             );
             const bases = [];
-            console.log(ftWidth);
-            console.log('opacity:' + opacity);
             try {
                 if (opacity > 0) {
-                    console.log(this.sequence);
-                    this.sequence
-                        .slice(0, 50)
-                        .forEach((seqObj, i) => {
-                            bases.push({
-                                start: 1 + first + i,
-                                end: 1 + first + i,
-                                aa: seqObj[0].aa,
-                                bits: seqObj[0].bits,
-                                yOffset: seqObj[4].bits + seqObj[3].bits + seqObj[2].bits + seqObj[1].bits
-                            });
-                            bases.push({
-                                start: 1 + first + i,
-                                end: 1 + first + i,
-                                aa: seqObj[1].aa,
-                                bits: seqObj[1].bits,
-                                yOffset: seqObj[4].bits + seqObj[3].bits + seqObj[2].bits
-                            });
-                            bases.push({
-                                start: 1 + first + i,
-                                end: 1 + first + i,
-                                aa: seqObj[2].aa,
-                                bits: seqObj[2].bits,
-                                yOffset: seqObj[4].bits + seqObj[3].bits
-                            });
-                            bases.push({
-                                start: 1 + first + i,
-                                end: 1 + first + i,
-                                aa: seqObj[3].aa,
-                                bits: seqObj[3].bits,
-                                yOffset: seqObj[4].bits
-                            });
-                            bases.push({
-                                start: 1 + first + i,
-                                end: 1 + first + i,
-                                aa: seqObj[4].aa,
-                                bits: seqObj[4].bits,
-                                yOffset: 0
-                            });
+                    for (let i in this.sequence.slice(0, 5)) {
+                        const seqObj = this.sequence[i];
+                        console.log(seqObj);
+                        bases.push({
+                            start: 1 + first + i,
+                            end: 1 + first + i,
+                            aa: seqObj[0].aa,
+                            bits: seqObj[0].bits,
+                            yOffset: seqObj[4].bits + seqObj[3].bits + seqObj[2].bits + seqObj[1].bits
                         });
-                    console.log(this.sequence);
+                        bases.push({
+                            start: 1 + first + i,
+                            end: 1 + first + i,
+                            aa: seqObj[1].aa,
+                            bits: seqObj[1].bits,
+                            yOffset: seqObj[4].bits + seqObj[3].bits + seqObj[2].bits
+                        });
+                        bases.push({
+                            start: 1 + first + i,
+                            end: 1 + first + i,
+                            aa: seqObj[2].aa,
+                            bits: seqObj[2].bits,
+                            yOffset: seqObj[4].bits + seqObj[3].bits
+                        });
+                        bases.push({
+                            start: 1 + first + i,
+                            end: 1 + first + i,
+                            aa: seqObj[3].aa,
+                            bits: seqObj[3].bits,
+                            yOffset: seqObj[4].bits
+                        });
+                        bases.push({
+                            start: 1 + first + i,
+                            end: 1 + first + i,
+                            aa: seqObj[4].aa,
+                            bits: seqObj[4].bits,
+                            yOffset: 0
+                        });
+                    }
                 }
-            }
-            catch (e) {
+            } catch
+                (e) {
                 console.log(e);
             }
 
 
-            // only add axis if there is room
-            // if (this.height > this.chHeight) {
-            //   this.xAxis = axisBottom(this.xScale)
-            //     .tickFormat(d => (Number.isInteger(d) ? d : ""))
-            //     .ticks(NUMBER_OF_TICKS, "s");
-            //   this.axis.call(this.xAxis);
-            // }
+// only add axis if there is room
+// if (this.height > this.chHeight) {
+//   this.xAxis = axisBottom(this.xScale)
+//     .tickFormat(d => (Number.isInteger(d) ? d : ""))
+//     .ticks(NUMBER_OF_TICKS, "s");
+//   this.axis.call(this.xAxis);
+// }
 
-            // this.axis.attr("transform", `translate(${this.margin.left + half},0)`);
+// this.axis.attr("transform", `translate(${this.margin.left + half},0)`);
             this.axis.select(".domain").remove();
             this.axis.selectAll(".tick line").remove();
 
@@ -218,14 +213,14 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 .attr("d", d => this.pathmap.get(d.aa))
                 .attr("stroke", d => this.colorByChemistry(d.aa))
                 .attr("fill", d => this.colorByChemistry(d.aa))
-                .attr('transform',d => {
+                .attr('transform', d => {
                     return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
                     + (100 - (100 * d.bits) - (100 * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
                 });
 
             this.bases.exit().remove();
 
-            this.bases.attr('transform',d => {
+            this.bases.attr('transform', d => {
                 return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset() + (100 - (100 * d.bits) - (100 * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
             });
 
@@ -292,7 +287,6 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     _updateHighlight() {
         this.trackHighlighter.updateHighlight();
     }
-
 
 
 }

@@ -136,7 +136,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
         // this._getCharSize();
         console.log('refreshing');
         if (this.axis) {
-            console.log('in this.axis')
+            console.log('in this.axis');
             // const widthScale = 2;
             const ftWidth = this.getSingleBaseWidth();
             const opacity = ftWidth - 10;
@@ -146,6 +146,8 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 Math.min(this.sequence.length, this._displayend + 1)
             );
             const bases = [];
+            console.log(ftWidth);
+            console.log('opacity:' + opacity);
             try {
                 if (opacity > 0) {
                     console.log('in opacity>0');

@@ -133,7 +133,6 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
         return 0.75 * this._height;
     }
     refresh() {
-        this._updateScaleDomain();
         // this._getCharSize();
         console.log('refreshing');
         if (this.axis) {
@@ -152,7 +151,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
             console.log('opacity:' + opacity);
             try {
                 if (opacity > 0) {
-                    console.log('in opacity>0');
+                    console.log(this.sequence);
                     this.sequence
                         .slice(first, last)
                         .forEach((seqObj, i) => {

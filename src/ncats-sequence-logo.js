@@ -124,7 +124,9 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     }
     refresh() {
         // this._getCharSize();
+        console.log('refreshing');
         if (this.axis) {
+            console.log('in this.axis')
             // const widthScale = 2;
             const ftWidth = this.getSingleBaseWidth();
             const opacity = ftWidth - 10;
@@ -136,6 +138,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
             const bases = [];
             try {
                 if (opacity > 0) {
+                    console.log('in opacity>0');
                     this.sequence
                         .slice(first, last)
                         .forEach((seqObj, i) => {
@@ -175,6 +178,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                                 yOffset: 0
                             });
                         });
+                    console.log(this.sequence);
                 }
             }
             catch (e) {

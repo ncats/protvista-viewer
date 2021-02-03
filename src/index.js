@@ -29,7 +29,9 @@ class NcatsProtVistaViewer extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if(name == "sequence") {
             this.sequence = newValue;
-            this.weblogo?.setSequence(JSON.parse(newValue));
+            if(this.weblogo){
+                this.weblogo.setSequence(JSON.parse(newValue));
+            }
         }
     }
 }

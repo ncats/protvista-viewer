@@ -18,7 +18,6 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.manager.appendChild(this.navigation);
         this.navigation.appendChild(this.weblogo);
         this.weblogo.setAttribute('height', '100');
-        this.weblogo.setAttribute('length', '100');
         this.attributeChangedCallback('sequence', '', this.getAttribute("sequence"));
     }
 
@@ -28,9 +27,12 @@ class NcatsProtVistaViewer extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if(name == "sequence") {
-            this.sequence = newValue;
+            this.sequence = JSON.parse(newValue);
+            if(this.navigation){
+                this.navigation.setAttribute('length', this.sequence.length);
+            }
             if(this.weblogo){
-                this.weblogo.setSequence(JSON.parse(newValue));
+                this.weblogo.setSequence(this.sequence);
             }
         }
     }

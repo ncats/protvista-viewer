@@ -8,14 +8,26 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
 
     connectedCallback() {
         super.connectedCallback();
-
-        this.sequence = JSON.parse(this.getAttribute("sequence"));
-        if (this.sequence) {
-            this._createSequence();
-        }
+        this.setSequence();
         this.addEventListener("load", e => {
             this.data = e.detail.payload;
         });
+    }
+
+    setSequence(inSeq) {
+        if (inSeq) {
+            this.sequence = inSeq;
+        } else {
+            this.sequence = JSON.parse(this.getAttribute('sequence'));
+        }
+        if (this.sequence) {
+            this.setAttribute("length", this.sequence.length);
+            if (!super.svg) {
+                this._createSequence();
+            } else {
+                this.refresh();
+            }
+        }
     }
 
     constructor() {
@@ -53,22 +65,16 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
         return ProtvistaZoomable.observedAttributes.concat(
             "highlightstart",
             "highlightend",
-            "sequence"
+            "sequence",
+            "height"
         );
     }
 
 
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback(name, oldValue, newValue);
-        console.log(`${name} changed from ${oldValue} to ${newValue}`);
-        if (name === 'sequence') {
-            this.sequence = newValue;
-        }
-        if (this.sequence && !super.svg) {
-            console.log('creating');
-            this._createSequence();
-        } else {
-            this.refresh();
+        if (name == 'sequence') {
+            this.setSequence(JSON.parse(newValue));
         }
     }
 
@@ -77,13 +83,10 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     }
 
     set data(data) {
-        if (typeof data === "string") this.sequence = data;
-        else if ("sequence" in data) this.sequence = data.sequence;
-        if (this.sequence && !super.svg) {
-            this._createSequence();
-        } else {
-            this.refresh();
-        }
+        let seq;
+        if (typeof data == "string") seq = data;
+        else if ("sequence" in data) seq = data.sequence;
+        this.setSequence(JSON.parse(seq));
     }
 
     _getCharSize() {
@@ -134,12 +137,10 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
 
     refresh() {
         // this._getCharSize();
-        console.log('refreshing');
         if (this.axis) {
-            console.log('in this.axis');
             // const widthScale = 2;
             const ftWidth = this.getSingleBaseWidth();
-            const opacity = 100;//ftWidth - 10;
+            const opacity = ftWidth - 10;
             const half = ftWidth / 2;
             const first = Math.round(Math.max(0, this._displaystart - 2));
             const last = Math.round(
@@ -148,9 +149,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
             const bases = [];
             try {
                 if (opacity > 0) {
-                    for (let i in this.sequence.slice(0, 5)) {
-                        const seqObj = this.sequence[i];
-                        console.log(seqObj);
+                    this.sequence.slice(first, last).forEach((seqObj, i) => {
                         bases.push({
                             start: 1 + first + i,
                             end: 1 + first + i,
@@ -186,23 +185,13 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                             bits: seqObj[4].bits,
                             yOffset: 0
                         });
-                    }
+                    });
                 }
             } catch
                 (e) {
-                console.log(e);
+                console.log('error: ' + JSON.stringify(e));
             }
 
-
-// only add axis if there is room
-// if (this.height > this.chHeight) {
-//   this.xAxis = axisBottom(this.xScale)
-//     .tickFormat(d => (Number.isInteger(d) ? d : ""))
-//     .ticks(NUMBER_OF_TICKS, "s");
-//   this.axis.call(this.xAxis);
-// }
-
-// this.axis.attr("transform", `translate(${this.margin.left + half},0)`);
             this.axis.select(".domain").remove();
             this.axis.selectAll(".tick line").remove();
 

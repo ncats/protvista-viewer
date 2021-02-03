@@ -2,7 +2,7 @@ import ProtVistaManager from "protvista-manager";
 import ProtVistaNavigation from "protvista-navigation";
 import NcatsSequenceLogo from "./ncats-sequence-logo";
 
-class App extends HTMLElement {
+class NcatsProtVistaViewer extends HTMLElement {
     constructor() {
         super();
     }
@@ -17,6 +17,8 @@ class App extends HTMLElement {
         this.appendChild(this.manager);
         this.manager.appendChild(this.navigation);
         this.navigation.appendChild(this.weblogo);
+        this.weblogo.setAttribute('height', '100');
+        this.weblogo.setAttribute('length', '100');
         this.attributeChangedCallback('sequence', '', this.getAttribute("sequence"));
     }
 
@@ -25,10 +27,9 @@ class App extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        console.log(`${name}: ${oldValue} -> ${newValue}`);
         if(name == "sequence") {
             this.sequence = newValue;
-            this.weblogo.setAttribute('sequence', this.sequence);
+            this.weblogo?.setSequence(JSON.parse(newValue));
         }
     }
 }
@@ -36,4 +37,4 @@ class App extends HTMLElement {
 window.customElements.define('protvista-manager', ProtVistaManager);
 window.customElements.define('protvista-navigation', ProtVistaNavigation);
 window.customElements.define('ncats-sequence-logo', NcatsSequenceLogo);
-window.customElements.define('ncats-protvista-viewer', App);
+window.customElements.define('ncats-protvista-viewer', NcatsProtVistaViewer);

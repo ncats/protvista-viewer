@@ -133,6 +133,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
         return 0.75 * this._height;
     }
     refresh() {
+        this._updateScaleDomain();
         // this._getCharSize();
         console.log('refreshing');
         if (this.axis) {

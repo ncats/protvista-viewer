@@ -14,9 +14,9 @@ class App extends HTMLElement {
         this.navigation.setAttribute('length', '100');
         this.navigation.setAttribute('displaystart', '0');
         this.navigation.setAttribute('displayend', '75');
+        this.appendChild(this.manager);
         this.manager.appendChild(this.navigation);
         this.navigation.appendChild(this.weblogo);
-        this.appendChild(this.manager);
         this.attributeChangedCallback('sequence', '', this.getAttribute("sequence"));
     }
 
@@ -37,10 +37,3 @@ window.customElements.define('protvista-manager', ProtVistaManager);
 window.customElements.define('protvista-navigation', ProtVistaNavigation);
 window.customElements.define('ncats-sequence-logo', NcatsSequenceLogo);
 window.customElements.define('ncats-protvista-viewer', App);
-//
-// <protvista-manager>
-// <protvista-navigation
-// length="100"
-// displaystart="0"
-// displayend="75"></protvista-navigation>
-//     </protvista-manager>

@@ -61,7 +61,10 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback(name, oldValue, newValue);
         console.log(`${name} changed from ${oldValue} to ${newValue}`);
+        console.log(this.sequence);
+        console.log(super.svg);
         if (this.sequence && !super.svg) {
+            console.log('creating');
             this._createSequence();
         } else {
             this.refresh();

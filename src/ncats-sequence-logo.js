@@ -141,7 +141,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
             console.log(this.xScale());
             // const widthScale = 2;
             const ftWidth = this.getSingleBaseWidth();
-            const opacity = ftWidth - 10;
+            const opacity = 100;//ftWidth - 10;
             const half = ftWidth / 2;
             const first = Math.round(Math.max(0, this._displaystart - 2));
             const last = Math.round(

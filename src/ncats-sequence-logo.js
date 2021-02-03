@@ -153,7 +153,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 if (opacity > 0) {
                     console.log(this.sequence);
                     this.sequence
-                        .slice(first, last)
+                        .slice(0, 50)
                         .forEach((seqObj, i) => {
                             bases.push({
                                 start: 1 + first + i,

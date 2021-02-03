@@ -52,7 +52,8 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     static get observedAttributes() {
         return ProtvistaZoomable.observedAttributes.concat(
             "highlightstart",
-            "highlightend"
+            "highlightend",
+            "sequence"
         );
     }
 

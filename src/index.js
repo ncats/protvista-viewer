@@ -28,11 +28,13 @@ class NcatsProtVistaViewer extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if(name == "sequence") {
             this.sequence = JSON.parse(newValue);
-            if(this.navigation){
-                this.navigation.setAttribute('length', this.sequence.length);
-            }
-            if(this.weblogo){
-                this.weblogo.setSequence(this.sequence);
+            if(this.sequence) {
+                if (this.navigation) {
+                    this.navigation.setAttribute('length', this.sequence.length);
+                }
+                if (this.weblogo) {
+                    this.weblogo.setSequence(this.sequence);
+                }
             }
         }
     }

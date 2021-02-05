@@ -1,4 +1,4 @@
-import {select} from "d3";
+import {select, line, merge} from "d3";
 import ProtvistaZoomable from "protvista-zoomable";
 import {getPathMap} from "./pathmap";
 
@@ -79,6 +79,12 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
             .attr("class", "sequence")
             .attr("transform", `translate(0,${this.standardOffset()})`);
 
+        this.line_path = super.svg
+            .append("g")
+            .attr("class", "linePlot")
+            .attr("transform", `translate(0,${this.standardOffset()})`)
+            .append("path");
+
         this.trackHighlighter.appendHighlightTo(this.svg);
         this.refresh();
     }
@@ -90,57 +96,44 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     refresh() {
         if (this.axis) {
             const ftWidth = this.getSingleBaseWidth();
-            const opacity = ftWidth - 10;
+            const sequenceOpacity = ftWidth - 10;
+            const lineOpacity = 1 - sequenceOpacity;
             const first = Math.round(Math.max(0, this._displaystart - 2));
             const last = Math.round(Math.min(this.sequence.length, this._displayend + 1));
+
             const bases = [];
+            let lineData = [];
             try {
-                if (opacity > 0) {
+                if (sequenceOpacity > 0) {
                     this.sequence.slice(first, last).forEach((seqObj, i) => {
-                        bases.push({
-                            start: 1 + first + i,
-                            end: 1 + first + i,
-                            aa: seqObj[0].aa,
-                            bits: seqObj[0].bits,
-                            yOffset: seqObj[4].bits + seqObj[3].bits + seqObj[2].bits + seqObj[1].bits
-                        });
-                        bases.push({
-                            start: 1 + first + i,
-                            end: 1 + first + i,
-                            aa: seqObj[1].aa,
-                            bits: seqObj[1].bits,
-                            yOffset: seqObj[4].bits + seqObj[3].bits + seqObj[2].bits
-                        });
-                        bases.push({
-                            start: 1 + first + i,
-                            end: 1 + first + i,
-                            aa: seqObj[2].aa,
-                            bits: seqObj[2].bits,
-                            yOffset: seqObj[4].bits + seqObj[3].bits
-                        });
-                        bases.push({
-                            start: 1 + first + i,
-                            end: 1 + first + i,
-                            aa: seqObj[3].aa,
-                            bits: seqObj[3].bits,
-                            yOffset: seqObj[4].bits
-                        });
-                        bases.push({
-                            start: 1 + first + i,
-                            end: 1 + first + i,
-                            aa: seqObj[4].aa,
-                            bits: seqObj[4].bits,
-                            yOffset: 0
+                        seqObj.forEach((aaObj, j) => {
+                            const last = ((j + 1) == seqObj.length);
+                            bases.push({
+                                start: 1 + first + i,
+                                end: 1 + first + i,
+                                aa: aaObj.aa,
+                                bits: aaObj.bits,
+                                yOffset: last ? 0 : seqObj.slice(j + 1).map(eachAA => eachAA.bits).reduce((a, c) => a + c)
+                            });
                         });
                     });
                 }
-            } catch
-                (e) {
+                if (lineOpacity > 0){
+                    lineData = this.sequence.slice(first, last).map((seqObj, i) => {
+                        const retObj = {};
+                        const only = (seqObj.length == 1);
+                        retObj.y = only ? seqObj[0].bits : seqObj.map(eachAA => eachAA.bits).reduce( (a, c) => a + c);
+                        retObj.x = i;
+                        retObj.position = 1 + first + i;
+                        return retObj;
+                    })
+                }
+            } catch (e) {
                 console.log('error: ' + JSON.stringify(e));
             }
 
-            this.axis.select(".domain").remove();
-            this.axis.selectAll(".tick line").remove();
+            // this.axis.select(".domain").remove();
+            // this.axis.selectAll(".tick line").remove();
 
             this.bases = this.seq_g.selectAll("path.base").data(bases, d => d.start);
             this.bases.enter()
@@ -153,12 +146,21 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                     return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
                     + (100 - (100 * d.bits) - (100 * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
                 });
-
             this.bases.exit().remove();
 
             this.bases.attr('transform', d => {
-                return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset() + (100 - (100 * d.bits) - (100 * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
+                return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
+                + (100 - (100 * d.bits) - (100 * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
             });
+
+            this.line_path.data([lineData])
+                .attr("d", line()
+                    .x(d => this.getXFromSeqPosition(d.position) + (ftWidth / 2))
+                    .y(d => 100 * (1 - d.y)))
+                .attr("stroke", "black")
+                .attr("fill", "none")
+                .attr('transform', d => {
+                    return `translate(0, ${-this.standardOffset()})`;});
 
             this.background = this.seq_bg
                 .selectAll("rect.base_bg")
@@ -178,8 +180,9 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 .call(this.bindEvents, this);
             this.background.exit().remove();
 
-            this.seq_g.style("opacity", Math.min(1, opacity));
-            this.background.style("opacity", Math.min(1, opacity));
+            this.seq_g.style("opacity", Math.min(1, sequenceOpacity));
+            this.line_path.style("opacity", Math.min(1, lineOpacity));
+            this.seq_bg.style("opacity", Math.min(1, sequenceOpacity));
 
             this._updateHighlight();
         }

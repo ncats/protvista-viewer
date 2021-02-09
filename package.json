@@ -9,6 +9,7 @@
     "publish": "npm run build && npm version patch && npm publish"
   },
   "dependencies": {
+    "d3": "^6.5.0",
     "protvista-manager": "^3.0.0",
     "protvista-navigation": "^3.0.0",
     "protvista-zoomable": "^3.0.0"

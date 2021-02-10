@@ -164,7 +164,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 .attr("stroke", "black")
                 .attr("fill", "none")
                 .attr('transform', d => {
-                    return `translate(0, ${-this.standardOffset()}) scale(1, ${1 / 4.2})`;});
+                    return `translate(0, ${-this.standardOffset()}) scale(1, 4.2)`;});
 
             this.background = this.seq_bg
                 .selectAll("rect.base_bg")

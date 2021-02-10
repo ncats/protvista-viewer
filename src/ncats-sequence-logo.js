@@ -154,17 +154,15 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
 
             this.bases.attr('transform', d => {
                 return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
-                + (100 - (this.heightFactor * d.bits) - (this.heightFactor * d.yOffset))}) scale(${ftWidth / 100}, ${100 * d.bits / 4.2})`;
+                + (100 - (this.heightFactor * d.bits) - (this.heightFactor * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits / 4.2})`;
             });
 
             this.line_path.data([lineData])
                 .attr("d", line()
                     .x(d => this.getXFromSeqPosition(d.position) + (ftWidth / 2))
-                    .y(d => (1 - d.y)))
+                    .y(d => (1 - d.y) * this.heightFactor))
                 .attr("stroke", "black")
-                .attr("fill", "none")
-                .attr('transform', d => {
-                    return `translate(0, ${-this.standardOffset()})`;});
+                .attr("fill", "none");
 
             this.background = this.seq_bg
                 .selectAll("rect.base_bg")

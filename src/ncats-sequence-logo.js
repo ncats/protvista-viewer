@@ -148,13 +148,13 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 .attr("fill", d => this.colorByChemistry(d.aa))
                 .attr('transform', d => {
                     return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
-                    + (100 - (this.heightFactor * d.bits) - (this.heightFactor * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
+                    + (100 - (this.heightFactor * d.bits) - (this.heightFactor * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits / 4.2})`;
                 });
             this.bases.exit().remove();
 
             this.bases.attr('transform', d => {
                 return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
-                + (100 - (this.heightFactor * d.bits) - (this.heightFactor * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
+                + (100 - (this.heightFactor * d.bits) - (this.heightFactor * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits / 4.2})`;
             });
 
             this.line_path.data([lineData])

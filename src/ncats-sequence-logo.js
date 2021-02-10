@@ -93,6 +93,10 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
         return 0.75 * this._height;
     }
 
+    get heightFactor() {
+        return 100 / 4.2;
+    }
+
     refresh() {
         if (this.axis) {
             const ftWidth = this.getSingleBaseWidth();
@@ -144,19 +148,19 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 .attr("fill", d => this.colorByChemistry(d.aa))
                 .attr('transform', d => {
                     return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
-                    + (100 - (100 * d.bits) - (100 * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
+                    + (100 - (this.heightFactor * d.bits) - (this.heightFactor * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
                 });
             this.bases.exit().remove();
 
             this.bases.attr('transform', d => {
                 return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
-                + (100 - (100 * d.bits) - (100 * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
+                + (100 - (this.heightFactor * d.bits) - (this.heightFactor * d.yOffset))}) scale(${ftWidth / 100}, ${d.bits})`;
             });
 
             this.line_path.data([lineData])
                 .attr("d", line()
                     .x(d => this.getXFromSeqPosition(d.position) + (ftWidth / 2))
-                    .y(d => 100 * (1 - d.y)))
+                    .y(d => this.heightFactor * (1 - d.y)))
                 .attr("stroke", "black")
                 .attr("fill", "none")
                 .attr('transform', d => {

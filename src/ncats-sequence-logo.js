@@ -126,7 +126,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                     lineData = this.sequence.slice(first, last).map((seqObj, i) => {
                         const retObj = {};
                         const only = (seqObj.length == 1);
-                        retObj.y = only ? seqObj[0].bits : seqObj.map(eachAA => eachAA.bits).reduce( (a, c) => a + c);
+                        retObj.y = only ? seqObj[0].bits / 4.2 : seqObj.map(eachAA => eachAA.bits / 4.2).reduce( (a, c) => a + c);
                         retObj.x = i;
                         retObj.position = 1 + first + i;
                         return retObj;
@@ -160,7 +160,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
             this.line_path.data([lineData])
                 .attr("d", line()
                     .x(d => this.getXFromSeqPosition(d.position) + (ftWidth / 2))
-                    .y(d => this.heightFactor * (1 - d.y)))
+                    .y(d => (1 - d.y)))
                 .attr("stroke", "black")
                 .attr("fill", "none")
                 .attr('transform', d => {

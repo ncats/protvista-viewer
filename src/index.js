@@ -36,12 +36,14 @@ class NcatsProtVistaViewer extends HTMLElement {
             if (this.navigation) {
                 this.navigation.setAttribute('length', this.maxLength);
             }
-            this.annotationMap.forEach((elements, track) => {
-                const trackElement = document.querySelector('#' + track);
-                if (trackElement) {
-                    trackElement.setAttribute('length', this.maxLength);
-                }
-            });
+            if (this.annotationMap) {
+                this.annotationMap.forEach((elements, track) => {
+                    const trackElement = document.querySelector('#' + track);
+                    if (trackElement) {
+                        trackElement.setAttribute('length', this.maxLength);
+                    }
+                });
+            }
         }
     }
 

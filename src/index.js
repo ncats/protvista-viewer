@@ -38,7 +38,7 @@ class NcatsProtVistaViewer extends HTMLElement {
             }
             if (this.annotationMap) {
                 this.annotationMap.forEach((elements, track) => {
-                    const trackElement = document.querySelector('#' + track);
+                    const trackElement = this.manager.querySelector('#' + track);
                     if (trackElement) {
                         trackElement.setAttribute('length', this.maxLength);
                     }
@@ -152,7 +152,7 @@ class NcatsProtVistaViewer extends HTMLElement {
                     this.manager.appendChild(trackElement);
                     trackElement.data = elements;
                 }
-                maxLen = Math.max(maxLen, ...elements.map(each => each.endResidue));
+                maxLen = Math.max(maxLen, ...elements.map(each => each.end));
             });
             this.updateLength(maxLen);
         }

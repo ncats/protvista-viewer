@@ -64,7 +64,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     _createSequence() {
         super.svg = select(this)
             .append("div")
-            .attr("height", this._height)
+            .attr("style", `height: ${this._height}px`)
             .attr("class", "")
             .append("svg")
             .attr("id", "")

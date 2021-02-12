@@ -1,7 +1,7 @@
 {
   "name": "ncats-protvista-viewer",
   "description": "A collection of nightingale and custom components to show details of a protein sequence",
-  "version": "1.0.42",
+  "version": "1.0.43",
   "main": "dist/bundle.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

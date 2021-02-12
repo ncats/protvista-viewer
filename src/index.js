@@ -14,8 +14,8 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.weblogo = document.createElement('ncats-sequence-logo');
         this.maxLength = 10;
         this.navigation.setAttribute('length', this.maxLength);
-        this.navigation.setAttribute('displaystart', '0');
-        this.navigation.setAttribute('displayend', '75');
+        this.navigation.setAttribute('displaystart', this.getAttribute('displaystart') || 0);
+        this.navigation.setAttribute('displayend', this.getAttribute('displayend') || 75);
         this.appendChild(this.manager);
         this.manager.appendChild(this.navigation);
         this.manager.appendChild(this.weblogo);

@@ -49,17 +49,22 @@ class NcatsProtVistaViewer extends HTMLElement {
 
     typeToTrack(type) {
 
-        if (type == "Subdomain") {
+        if (['Subdomain', 'N-Lobe', 'C-Lobe'].includes(type)) {
             return "subdomain";
         }
-        if (["alpha-helix", "beta-strand", 'alphaC-beta4 Loop', 'Activation Loop', 'Activation Segment', 'Catalytic Loop', 'Glycine Loop', 'Linker', 'KeyAA']
-            .includes(type)) {
-            return "structure";
+        if (['alphaC-beta4 Loop', 'Glycine Loop', 'Linker'].includes(type)) {
+            return "structural";
         }
-        if (["R-Spine", "C-Spine", "R-Spine Shell"].includes(type)){
-            return "spine";
+        if (['KeyAA', 'Motif'].includes(type)) {
+            return "smallStuff";
         }
-        return null;
+        if (['Catalytic Loop', 'Activation Loop', 'Activation Segment', 'Gatekeeper', 'CMGC Insert'].includes(type)) {
+            return 'functional';
+        }
+        if (["alpha-helix", "beta-strand", "R-Spine", "C-Spine", "R-Spine Shell"].includes(type)) {
+            return 'temp';
+        }
+        return 'undetermined';
     }
 
     compileAnnotations(annotations) {
@@ -77,10 +82,54 @@ class NcatsProtVistaViewer extends HTMLElement {
                 trackElements.push(this.mapIO(track, each));
             }
         });
+
+        // beta-strands - repeated
+
+        let structural = this.annotationMap.get('structural');
+        let temp = this.annotationMap.get('temp');
+        const betaStrands = this.convertToCopiedElements(temp.filter(each => each.type == 'beta-strand'));
+        const alphaHelices = this.convertToCopiedElements(temp.filter(each => each.type == 'alpha-helix'));
+        structural.push(betaStrands);
+        structural.push(alphaHelices);
+
+        let smallStuff = this.annotationMap.get('smallStuff');
+        const cSpine = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'R-Spine'));
+        const rSpine = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'C-Spine'));
+        const rSpineShell = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'R-Spine Shell'));
+        smallStuff.push(cSpine);
+        smallStuff.push(rSpine);
+        smallStuff.push(rSpineShell);
+
+        this.annotationMap.delete('temp');
     }
 
+    convertToDiscontinuousElement(elements) {
+        return {
+            shape: elements[0].shape,
+            color: elements[0].color,
+            accession: elements[0].accession,
+            locations: [{
+                fragments: elements.map(each => {
+                    return {start: each.start, end: each.end}
+                })
+            }]
+        };
+    }
+    convertToCopiedElements(elements) {
+        return {
+            shape: elements[0].shape,
+            color: elements[0].color,
+            accession: elements[0].accession,
+            locations: elements.map(each => {
+                return {
+                    fragments: [{start: each.start, end: each.end}]
+                }
+            })
+        };
+    }
     mapIO(track, input) {
         const output = {
+            type: input.type,
             accession: input.name,
             tooltipContent: input.name,
             start: input.startResidue,
@@ -112,10 +161,11 @@ class NcatsProtVistaViewer extends HTMLElement {
                 break;
             case 'Glycine Loop':
                 output.color = 'black';
-                output.shape = 'catFace';
+                output.shape = 'bridge';
                 break;
             case 'Subdomain':
-                output.color = '#' + Math.floor(Math.random() * 256 ** 3).toString(16);
+                this.ticktock = !this.ticktock;
+                output.color = (this.ticktock ? '#ddd' : '#eee');
                 output.shape = 'roundRectangle';
                 break;
             case 'Linker':
@@ -134,8 +184,18 @@ class NcatsProtVistaViewer extends HTMLElement {
                 output.color = 'blue';
                 break;
             case 'R-Spine Shell':
-                output.shape = 'roundRectangle';
                 output.color = 'chartreuse';
+                break;
+            case 'N-Lobe':
+            case 'C-Lobe':
+                this.ticktock2 = !this.ticktock2;
+                output.color = (this.ticktock2 ? '#ddd' : '#eee');
+                output.shape = 'roundRectangle';
+                break;
+            case 'Gatekeeper':
+            case 'CMGC Insert':
+            case 'Motif':
+                output.color = 'pink';
                 break;
         }
         return output;
@@ -144,16 +204,19 @@ class NcatsProtVistaViewer extends HTMLElement {
     updateAnnotations(annotations) {
         this.compileAnnotations(annotations);
         if (this.manager) {
-            let maxLen = 0;
-            this.annotationMap.forEach((elements, track) => {
-                if (elements.length > 0) {
+            for (const track of ['subdomain', 'structural', 'functional', 'smallStuff']) {
+                const elements = this.annotationMap.get(track);
+                if (elements && elements.length > 0) {
                     const trackElement = document.createElement("protvista-track");
                     trackElement.setAttribute('id', track);
+                    if (track == 'subdomain') {
+                        trackElement.setAttribute('layout', 'non-overlapping');
+                    }
                     this.manager.appendChild(trackElement);
                     trackElement.data = elements;
                 }
-                maxLen = Math.max(maxLen, ...elements.map(each => each.end));
-            });
+            }
+            const maxLen = Math.max(...this.annotations.map(each => each.endResidue));
             this.updateLength(maxLen);
         }
     }

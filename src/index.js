@@ -265,7 +265,7 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.tooltip.title = title;
         this.tooltip.innerHTML = content;
         this.tooltip.x = event.detail.coords[0] - window.scrollX - manBounds.x + 50; // TODO <- magic number!!!
-        this.tooltip.y = event.detail.coords[1] - window.scrollY - manBounds.y + manBounds.height - logoBounds.height;
+        this.tooltip.y = event.detail.coords[1] - window.scrollY - manBounds.y + manBounds.height + logoBounds.height;
         this.tooltip.visible = true;
     }
 

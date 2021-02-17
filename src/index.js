@@ -20,24 +20,24 @@ class NcatsProtVistaLegend extends HTMLElement {
         this.appendChild(this.container);
 
         const data = [
-            NcatsProtVistaViewer.mapIO({type: 'Subdomain', name: 'H', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'alpha-helix', name: 'A', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'alphaC-beta4 Loop', name: 'B', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'beta-strand', name: 'C', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'Activation Loop', name: 'D', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'Activation Segment', name: 'E', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'Catalytic Loop', name: 'F', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'Glycine Loop', name: 'G', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'Linker', name: 'I', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'KeyAA', displayName: 'Key Amino Acid', name: 'J', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'R-Spine', name: 'K', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'C-Spine', name: 'L', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'R-Spine Shell', name: 'M', startResidue: 1, endResidue: 10}),
-            // NcatsProtVistaViewer.mapIO({type: 'N-Lobe', name: 'N', startResidue: 1, endResidue: 10}),
-            // NcatsProtVistaViewer.mapIO({type: 'C-Lobe', name: 'O', startResidue: 1, endResidue: 10}),
-            // NcatsProtVistaViewer.mapIO({type: 'Gatekeeper', name: 'P', startResidue: 1, endResidue: 10}),
-            // NcatsProtVistaViewer.mapIO({type: 'CMGC Insert', name: 'Q', startResidue: 1, endResidue: 10}),
-            NcatsProtVistaViewer.mapIO({type: 'Motif', name: 'R', startResidue: 1, endResidue: 10})
+            NcatsProtVistaViewer.mapIO({type: 'Subdomain', name: 'H', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'alpha-helix', name: 'A', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'alphaC-beta4 Loop', name: 'B', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'beta-strand', name: 'C', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Activation Loop', name: 'D', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Activation Segment', name: 'E', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Catalytic Loop', name: 'F', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Glycine Loop', name: 'G', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Linker', name: 'I', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'KeyAA', displayName: 'Key Amino Acid', name: 'J', startResidue: 5, endResidue: 5}),
+            NcatsProtVistaViewer.mapIO({type: 'R-Spine', name: 'K', startResidue: 5, endResidue: 5}),
+            NcatsProtVistaViewer.mapIO({type: 'C-Spine', name: 'L', startResidue: 5, endResidue: 5}),
+            NcatsProtVistaViewer.mapIO({type: 'R-Spine Shell', name: 'M', startResidue: 1, endResidue: 9}),
+            // NcatsProtVistaViewer.mapIO({type: 'N-Lobe', name: 'N', startResidue: 1, endResidue: 9}),
+            // NcatsProtVistaViewer.mapIO({type: 'C-Lobe', name: 'O', startResidue: 1, endResidue: 9}),
+            // NcatsProtVistaViewer.mapIO({type: 'Gatekeeper', name: 'P', startResidue: 1, endResidue: 9}),
+            // NcatsProtVistaViewer.mapIO({type: 'CMGC Insert', name: 'Q', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Motif', name: 'R', startResidue: 1, endResidue: 9})
         ];
 
         data.forEach(row => {
@@ -54,10 +54,10 @@ class NcatsProtVistaLegend extends HTMLElement {
 
             const track = document.createElement('protvista-track');
             theRow.appendChild(track);
-            track.setAttribute('length', 10);
-            track.setAttribute('width', 10);
+            track.setAttribute('length', 9);
+            track.setAttribute('width', 9);
             track.setAttribute('displaystart', 1);
-            track.setAttribute('displayend', 10);
+            track.setAttribute('displayend', 9);
 
             track.setAttribute('id', 'track-' + row.accession);
             track.data = [row];

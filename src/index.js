@@ -4,6 +4,69 @@ import ProtVistaNavigation from "protvista-navigation";
 import NcatsSequenceLogo from "./ncats-sequence-logo";
 import ProtvistaTooltip from "protvista-tooltip";
 
+class NcatsProtVistaLegend extends HTMLElement {
+    constructor() {
+        super();
+    }
+    connectedCallback(){
+        const style = document.createElement('style');
+        style.textContent = '.legend {display: flex; flex-wrap: wrap; place-content: space-around;}' +
+            '.entry{display:flex; padding-right:10px;}' +
+            '.label{width:75px; display: flex; align-items: center;}';
+        this.appendChild(style);
+
+        this.container = document.createElement('div');
+        this.container.className = 'legend';
+        this.appendChild(this.container);
+
+        const data = [
+            NcatsProtVistaViewer.mapIO({type: 'Subdomain', name: 'H', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'alpha-helix', name: 'A', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'alphaC-beta4 Loop', name: 'B', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'beta-strand', name: 'C', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'Activation Loop', name: 'D', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'Activation Segment', name: 'E', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'Catalytic Loop', name: 'F', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'Glycine Loop', name: 'G', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'Linker', name: 'I', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'KeyAA', displayName: 'Key Amino Acid', name: 'J', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'R-Spine', name: 'K', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'C-Spine', name: 'L', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'R-Spine Shell', name: 'M', startResidue: 1, endResidue: 10}),
+            // NcatsProtVistaViewer.mapIO({type: 'N-Lobe', name: 'N', startResidue: 1, endResidue: 10}),
+            // NcatsProtVistaViewer.mapIO({type: 'C-Lobe', name: 'O', startResidue: 1, endResidue: 10}),
+            // NcatsProtVistaViewer.mapIO({type: 'Gatekeeper', name: 'P', startResidue: 1, endResidue: 10}),
+            // NcatsProtVistaViewer.mapIO({type: 'CMGC Insert', name: 'Q', startResidue: 1, endResidue: 10}),
+            NcatsProtVistaViewer.mapIO({type: 'Motif', name: 'R', startResidue: 1, endResidue: 10})
+        ];
+
+        data.forEach(row => {
+            console.log(row);
+            const theRow = document.createElement('div');
+            theRow.className = 'entry';
+
+            this.container.appendChild(theRow);
+
+            const label = document.createElement('span');
+            theRow.appendChild(label);
+            label.className = 'label';
+            label.innerText = row.displayName || row.type;
+
+            const track = document.createElement('protvista-track');
+            theRow.appendChild(track);
+            track.setAttribute('length', 10);
+            track.setAttribute('width', 10);
+            track.setAttribute('displaystart', 1);
+            track.setAttribute('displayend', 10);
+
+            track.setAttribute('id', 'track-' + row.accession);
+            track.data = [row];
+            track.style = 'width:50px';
+        });
+    }
+
+}
+
 class NcatsProtVistaViewer extends HTMLElement {
     constructor() {
         super();
@@ -25,7 +88,6 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.attributeChangedCallback('annotations', '', this.getAttribute('annotations'));
 
         this.weblogo.addEventListener("change", (event) => {
-
             return this.showLogoTooltip(event)
         });
     }
@@ -85,7 +147,7 @@ class NcatsProtVistaViewer extends HTMLElement {
                 } else {
                     this.annotationMap.set(track, trackElements);
                 }
-                trackElements.push(this.mapIO(track, each));
+                trackElements.push(NcatsProtVistaViewer.mapIO(each));
             }
         });
 
@@ -131,12 +193,13 @@ class NcatsProtVistaViewer extends HTMLElement {
         };
     }
 
-    mapIO(track, input) {
+    static mapIO(input) {
         const output = {
             type: input.type,
             accession: input.name,
             start: input.startResidue,
-            end: input.endResidue
+            end: input.endResidue,
+            displayName: input.displayName
         };
         switch (input.type) {
             case 'alpha-helix':
@@ -299,6 +362,7 @@ class NcatsProtVistaViewer extends HTMLElement {
 window.customElements.define('protvista-manager', ProtVistaManager);
 window.customElements.define('protvista-navigation', ProtVistaNavigation);
 window.customElements.define('protvista-track', ProtvistaTrack);
+window.customElements.define('protvista-tooltip', ProtvistaTooltip);
 window.customElements.define('ncats-sequence-logo', NcatsSequenceLogo);
 window.customElements.define('ncats-protvista-viewer', NcatsProtVistaViewer);
-window.customElements.define('protvista-tooltip', ProtvistaTooltip);
+window.customElements.define('ncats-protvista-legend', NcatsProtVistaLegend);

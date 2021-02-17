@@ -17,9 +17,9 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.maxLength = 10;
         this.navigation.setAttribute('length', this.maxLength);
         this.appendChild(this.manager);
+        this.manager.appendChild(this.tooltip);
         this.manager.appendChild(this.navigation);
         this.manager.appendChild(this.weblogo);
-        this.manager.appendChild(this.tooltip);
         this.weblogo.setAttribute('height', '100');
         this.attributeChangedCallback('sequence', '', this.getAttribute("sequence"));
         this.attributeChangedCallback('annotations', '', this.getAttribute('annotations'));
@@ -264,8 +264,8 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.logoBounds = this.manager.getBoundingClientRect();
         this.tooltip.title = title;
         this.tooltip.innerHTML = content;
-        this.tooltip.x = event.detail.coords[0] - window.scrollX - navBounds.x - 50;
-        this.tooltip.y = event.detail.coords[1] - window.scrollY - navBounds.y + manBounds.height - this.logoBounds.height;
+        this.tooltip.x = event.detail.coords[0] - window.scrollX;
+        this.tooltip.y = event.detail.coords[1] - window.scrollY;
         this.tooltip.visible = true;
     }
 

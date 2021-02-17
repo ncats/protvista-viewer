@@ -1,4 +1,4 @@
-import {select, line, merge} from "d3";
+import {line, select} from "d3";
 import ProtvistaZoomable from "protvista-zoomable";
 import {getPathMap} from "./pathmap";
 
@@ -127,11 +127,11 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                         });
                     });
                 }
-                if (lineOpacity > 0){
+                if (lineOpacity > 0) {
                     lineData = this.sequence.slice(first, last).map((seqObj, i) => {
                         const retObj = {};
                         const only = (seqObj.length == 1);
-                        retObj.y = only ? seqObj[0].bits : seqObj.map(eachAA => eachAA.bits).reduce( (a, c) => a + c);
+                        retObj.y = only ? seqObj[0].bits : seqObj.map(eachAA => eachAA.bits).reduce((a, c) => a + c);
                         retObj.x = i;
                         retObj.position = 1 + first + i;
                         return retObj;
@@ -141,26 +141,24 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 console.log('error: ' + JSON.stringify(e));
             }
 
-            // this.axis.select(".domain").remove();
-            // this.axis.selectAll(".tick line").remove();
-
             this.bases = this.seq_g.selectAll("path.base").data(bases, d => d.start);
             this.bases.enter()
                 .append("path")
-                .attr("class", "base")
+                .attr("class", "base feature")
                 .attr("d", d => this.pathmap.get(d.aa))
                 .attr("stroke", d => this.colorByChemistry(d.aa))
                 .attr("fill", d => this.colorByChemistry(d.aa))
                 .attr('transform', d => {
                     return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
                     + (100 - (this.heightFactor * (d.bits + d.yOffset)))}) scale(${ftWidth / 100}, ${d.bits / this.maxBits})`;
-                });
-            this.bases.exit().remove();
+                }).call(this.bindEvents, this);
 
             this.bases.attr('transform', d => {
                 return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
                 + (100 - (this.heightFactor * (d.bits + d.yOffset)))}) scale(${ftWidth / 100}, ${d.bits / this.maxBits})`;
-            });
+            }).call(this.bindEvents, this);
+
+            this.bases.exit().remove();
 
             this.line_path.data([lineData])
                 .attr("d", line()

@@ -2,6 +2,7 @@ import ProtVistaManager from "protvista-manager";
 import ProtvistaTrack from "protvista-track";
 import ProtVistaNavigation from "protvista-navigation";
 import NcatsSequenceLogo from "./ncats-sequence-logo";
+import ProtvistaTooltip from "protvista-tooltip";
 
 class NcatsProtVistaViewer extends HTMLElement {
     constructor() {
@@ -12,16 +13,21 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.manager = document.createElement("protvista-manager");
         this.navigation = document.createElement("protvista-navigation");
         this.weblogo = document.createElement('ncats-sequence-logo');
+        this.tooltip = document.createElement('protvista-tooltip');
         this.maxLength = 10;
         this.navigation.setAttribute('length', this.maxLength);
-        this.navigation.setAttribute('displaystart', this.getAttribute('displaystart') || 0);
-        this.navigation.setAttribute('displayend', this.getAttribute('displayend') || 75);
         this.appendChild(this.manager);
         this.manager.appendChild(this.navigation);
         this.manager.appendChild(this.weblogo);
+        this.manager.appendChild(this.tooltip);
         this.weblogo.setAttribute('height', '100');
         this.attributeChangedCallback('sequence', '', this.getAttribute("sequence"));
         this.attributeChangedCallback('annotations', '', this.getAttribute('annotations'));
+
+        this.weblogo.addEventListener("change", (event) => {
+
+            return this.showLogoTooltip(event)
+        });
     }
 
     static get observedAttributes() {
@@ -52,7 +58,7 @@ class NcatsProtVistaViewer extends HTMLElement {
         if (['Subdomain', 'N-Lobe', 'C-Lobe'].includes(type)) {
             return "subdomain";
         }
-        if (['alphaC-beta4 Loop', 'Glycine Loop', 'Linker'].includes(type)) {
+        if (["alpha-helix", "beta-strand", 'alphaC-beta4 Loop', 'Glycine Loop', 'Linker'].includes(type)) {
             return "structural";
         }
         if (['KeyAA', 'Motif'].includes(type)) {
@@ -61,7 +67,7 @@ class NcatsProtVistaViewer extends HTMLElement {
         if (['Catalytic Loop', 'Activation Loop', 'Activation Segment', 'Gatekeeper', 'CMGC Insert'].includes(type)) {
             return 'functional';
         }
-        if (["alpha-helix", "beta-strand", "R-Spine", "C-Spine", "R-Spine Shell"].includes(type)) {
+        if (["R-Spine", "C-Spine", "R-Spine Shell"].includes(type)) {
             return 'temp';
         }
         return 'undetermined';
@@ -83,19 +89,12 @@ class NcatsProtVistaViewer extends HTMLElement {
             }
         });
 
-        // beta-strands - repeated
-
-        let structural = this.annotationMap.get('structural');
         let temp = this.annotationMap.get('temp');
-        const betaStrands = this.convertToCopiedElements(temp.filter(each => each.type == 'beta-strand'));
-        const alphaHelices = this.convertToCopiedElements(temp.filter(each => each.type == 'alpha-helix'));
-        structural.push(betaStrands);
-        structural.push(alphaHelices);
 
         let smallStuff = this.annotationMap.get('smallStuff');
-        const cSpine = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'R-Spine'));
-        const rSpine = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'C-Spine'));
-        const rSpineShell = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'R-Spine Shell'));
+        const cSpine = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'R-Spine'), 'R-Spine');
+        const rSpine = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'C-Spine'), 'C-Spine');
+        const rSpineShell = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'R-Spine Shell'), 'R-Spine Shell');
         smallStuff.push(cSpine);
         smallStuff.push(rSpine);
         smallStuff.push(rSpineShell);
@@ -103,11 +102,12 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.annotationMap.delete('temp');
     }
 
-    convertToDiscontinuousElement(elements) {
+    convertToDiscontinuousElement(elements, accession) {
         return {
             shape: elements[0].shape,
             color: elements[0].color,
-            accession: elements[0].accession,
+            accession: accession,
+            tooltipContent: `Residues: ${elements.map(each => each.start).join(', ')}`,
             locations: [{
                 fragments: elements.map(each => {
                     return {start: each.start, end: each.end}
@@ -115,11 +115,14 @@ class NcatsProtVistaViewer extends HTMLElement {
             }]
         };
     }
+
     convertToCopiedElements(elements) {
         return {
             shape: elements[0].shape,
             color: elements[0].color,
             accession: elements[0].accession,
+            start: elements[0].start,
+            end: elements[0].end,
             locations: elements.map(each => {
                 return {
                     fragments: [{start: each.start, end: each.end}]
@@ -127,11 +130,11 @@ class NcatsProtVistaViewer extends HTMLElement {
             })
         };
     }
+
     mapIO(track, input) {
         const output = {
             type: input.type,
             accession: input.name,
-            tooltipContent: input.name,
             start: input.startResidue,
             end: input.endResidue
         };
@@ -173,7 +176,7 @@ class NcatsProtVistaViewer extends HTMLElement {
                 break;
             case 'KeyAA':
                 output.shape = 'diamond';
-                output.color = 'black';
+                output.color = 'magenta';
                 break;
             case 'R-Spine':
                 output.shape = 'diamond';
@@ -195,7 +198,7 @@ class NcatsProtVistaViewer extends HTMLElement {
             case 'Gatekeeper':
             case 'CMGC Insert':
             case 'Motif':
-                output.color = 'pink';
+                output.color = 'brown';
                 break;
         }
         return output;
@@ -203,6 +206,8 @@ class NcatsProtVistaViewer extends HTMLElement {
 
     updateAnnotations(annotations) {
         this.compileAnnotations(annotations);
+        let maxLen = 0;
+        let minLen = 0;
         if (this.manager) {
             for (const track of ['subdomain', 'structural', 'functional', 'smallStuff']) {
                 const elements = this.annotationMap.get(track);
@@ -214,14 +219,56 @@ class NcatsProtVistaViewer extends HTMLElement {
                     }
                     this.manager.appendChild(trackElement);
                     trackElement.data = elements;
+
+                    trackElement.addEventListener("change", (event) => {
+                        return this.showTrackTooltip(event)
+                    });
                 }
             }
-            const maxLen = Math.max(...this.annotations.map(each => each.endResidue));
+            maxLen = Math.max(...this.annotations.map(each => each.endResidue));
+            minLen = Math.min(...this.annotations.map(each => each.startResidue));
             this.updateLength(maxLen);
+        }
+        document.addEventListener("click", (event) => this.hideTooltip(event));
+        return {displayStart: minLen, displayEnd: maxLen};
+    }
+
+    hideTooltip(event) {
+        const tooltips = document.querySelectorAll("protvista-tooltip");
+        const path = event.path.map(element => element.localName || '');
+        if (!path.includes('protvista-manager')) {
+            tooltips.forEach(tooltip => tooltip.visible = false);
         }
     }
 
+    showTrackTooltip(event) {
+        if (event.detail.eventtype == "click" && event.detail.feature.accession) {
+            const details = event.detail.feature;
+            this.showTooltip(event.detail.feature.accession, details.tooltipContent || `start: ${details.start}<br/>end: ${details.end}`, event);
+        }
+    }
+
+    showLogoTooltip(event) {
+        if (event.detail.eventtype == "click" && event.detail.feature) {
+            const proportions = this.sequence[event.detail.feature.start - 1];
+            const tooltipContent = proportions.map(each => {
+                return `${each.aa}: ${each.bits.toFixed(4)} bits`
+            }).join("<br/>");
+            this.showTooltip(`Residue ${event.detail.feature.start}`, tooltipContent, event);
+        }
+    }
+
+    showTooltip(title, content, event){
+        this.tooltip.title = title;
+        this.tooltip.innerHTML = content;
+        this.tooltip.x = event.detail.coords[0];
+        this.tooltip.y = event.detail.coords[1];
+        this.tooltip.visible = true;
+    }
+
     attributeChangedCallback(name, oldValue, newValue) {
+        let displayEnd = 75;
+        let displayStart = 0;
         if (name == "sequence") {
             this.sequence = JSON.parse(newValue);
             if (this.sequence) {
@@ -229,13 +276,20 @@ class NcatsProtVistaViewer extends HTMLElement {
                 if (this.weblogo) {
                     this.weblogo.setSequence(this.sequence);
                 }
+                displayEnd = this.sequence.length;
             }
         }
         if (name == "annotations") {
             this.annotations = JSON.parse(newValue);
             if (this.annotations && this.annotations.length > 0) {
-                this.updateAnnotations(this.annotations);
+                const obj = this.updateAnnotations(this.annotations);
+                displayEnd = obj.displayEnd;
+                displayStart = obj.displayStart;
             }
+        }
+        if (this.manager) {
+            this.manager.setAttribute("displayend", displayEnd);
+            this.manager.setAttribute("displaystart", displayStart);
         }
     }
 }
@@ -245,3 +299,4 @@ window.customElements.define('protvista-navigation', ProtVistaNavigation);
 window.customElements.define('protvista-track', ProtvistaTrack);
 window.customElements.define('ncats-sequence-logo', NcatsSequenceLogo);
 window.customElements.define('ncats-protvista-viewer', NcatsProtVistaViewer);
+window.customElements.define('protvista-tooltip', ProtvistaTooltip);

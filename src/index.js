@@ -259,10 +259,13 @@ class NcatsProtVistaViewer extends HTMLElement {
     }
 
     showTooltip(title, content, event){
+        const navBounds = this.navigation.getBoundingClientRect();
+        const manBounds = this.manager.getBoundingClientRect();
+        this.logoBounds = this.manager.getBoundingClientRect();
         this.tooltip.title = title;
         this.tooltip.innerHTML = content;
-        this.tooltip.x = event.detail.coords[0];
-        this.tooltip.y = event.detail.coords[1];
+        this.tooltip.x = event.detail.coords[0] - window.scrollX - navBounds.x - 50;
+        this.tooltip.y = event.detail.coords[1] - window.scrollY - navBounds.y + manBounds.height - this.logoBounds.height;
         this.tooltip.visible = true;
     }
 

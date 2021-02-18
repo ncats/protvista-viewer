@@ -99,6 +99,10 @@ class NcatsProtVistaViewer extends HTMLElement {
             }
         });
         this.weblogo.addEventListener("change", (event) => {
+            if (event.detail.displaystart || event.detail.displayend){ // zoom event
+                this.clicking = false;
+                return this.hideTooltip();
+            }
             if (event.detail.feature) {
                 if (event.detail.eventtype == "click") {
                     this.clicking = true;
@@ -310,6 +314,10 @@ class NcatsProtVistaViewer extends HTMLElement {
                         }
                     });
                     trackElement.addEventListener("change", (event) => {
+                        if (event.detail.displaystart || event.detail.displayend){ // zoom event
+                            this.clicking = false;
+                            return this.hideTooltip();
+                        }
                         if (event.detail.feature && event.detail.feature.accession) {
                             if (event.detail.eventtype == "click") {
                                 this.clicking = true;
@@ -359,12 +367,19 @@ class NcatsProtVistaViewer extends HTMLElement {
     }
 
     showTooltip(title, content, event) {
+        const path = event.path.map(element => element.localName || '');
         const bounds = event.detail.target.getBoundingClientRect();
+        const xOffset = bounds.x + bounds.width / 2;
+        let yOffset = bounds.y + bounds.height / 2;
+        if (path.includes('ncats-sequence-logo')) {
+            const rowBounds = event.target.getBoundingClientRect();
+            yOffset = rowBounds.y + 85;
+        }
         const manBounds = this.manager.getBoundingClientRect();
         this.tooltip.title = title;
         this.tooltip.innerHTML = content;
-        this.tooltip.x = bounds.x + bounds.width/2 - manBounds.x;
-        this.tooltip.y = bounds.y + bounds.height/2 - manBounds.y;
+        this.tooltip.x = xOffset - manBounds.x;
+        this.tooltip.y = yOffset - manBounds.y;
         this.tooltip.visible = true;
     }
 

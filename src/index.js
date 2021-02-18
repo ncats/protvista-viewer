@@ -8,7 +8,8 @@ class NcatsProtVistaLegend extends HTMLElement {
     constructor() {
         super();
     }
-    connectedCallback(){
+
+    connectedCallback() {
         const style = document.createElement('style');
         style.textContent = '.legend {display: flex; flex-wrap: wrap; place-content: space-around;}' +
             '.entry{display:flex; padding-right:10px;}' +
@@ -29,7 +30,13 @@ class NcatsProtVistaLegend extends HTMLElement {
             NcatsProtVistaViewer.mapIO({type: 'Catalytic Loop', name: 'F', startResidue: 1, endResidue: 9}),
             NcatsProtVistaViewer.mapIO({type: 'Glycine Loop', name: 'G', startResidue: 1, endResidue: 9}),
             NcatsProtVistaViewer.mapIO({type: 'Linker', name: 'I', startResidue: 1, endResidue: 9}),
-            NcatsProtVistaViewer.mapIO({type: 'KeyAA', displayName: 'Key Amino Acid', name: 'J', startResidue: 5, endResidue: 5}),
+            NcatsProtVistaViewer.mapIO({
+                type: 'KeyAA',
+                displayName: 'Key Amino Acid',
+                name: 'J',
+                startResidue: 5,
+                endResidue: 5
+            }),
             NcatsProtVistaViewer.mapIO({type: 'R-Spine', name: 'K', startResidue: 5, endResidue: 5}),
             NcatsProtVistaViewer.mapIO({type: 'C-Spine', name: 'L', startResidue: 5, endResidue: 5}),
             NcatsProtVistaViewer.mapIO({type: 'R-Spine Shell', name: 'M', startResidue: 1, endResidue: 9}),
@@ -41,7 +48,6 @@ class NcatsProtVistaLegend extends HTMLElement {
         ];
 
         data.forEach(row => {
-            console.log(row);
             const theRow = document.createElement('div');
             theRow.className = 'entry';
 
@@ -53,11 +59,11 @@ class NcatsProtVistaLegend extends HTMLElement {
             label.innerText = row.displayName || row.type;
 
             const track = document.createElement('protvista-track');
-            theRow.appendChild(track);
-            track.setAttribute('length', 9);
             track.setAttribute('width', 9);
+            track.setAttribute('length', 9);
             track.setAttribute('displaystart', 1);
             track.setAttribute('displayend', 9);
+            theRow.appendChild(track);
 
             track.setAttribute('id', 'track-' + row.accession);
             track.data = [row];
@@ -87,8 +93,23 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.attributeChangedCallback('sequence', '', this.getAttribute("sequence"));
         this.attributeChangedCallback('annotations', '', this.getAttribute('annotations'));
 
+        this.weblogo.addEventListener('mouseout', (event) => {
+            if(!this.clicking) {
+                return this.hideTooltip();
+            }
+        });
         this.weblogo.addEventListener("change", (event) => {
-            return this.showLogoTooltip(event)
+            if (event.detail.feature) {
+                if (event.detail.eventtype == "click") {
+                    this.clicking = true;
+                    return this.showLogoTooltip(event);
+                }
+                if (event.detail.eventtype == "mouseover") {
+                    if(!this.clicking) {
+                        return this.showLogoTooltip(event);
+                    }
+                }
+            }
         });
     }
 
@@ -239,7 +260,7 @@ class NcatsProtVistaViewer extends HTMLElement {
                 break;
             case 'KeyAA':
                 output.shape = 'diamond';
-                output.color = 'magenta';
+                output.color = 'green';
                 break;
             case 'R-Spine':
                 output.shape = 'diamond';
@@ -283,8 +304,23 @@ class NcatsProtVistaViewer extends HTMLElement {
                     this.manager.appendChild(trackElement);
                     trackElement.data = elements;
 
+                    trackElement.addEventListener('mouseout', (event) => {
+                        if(!this.clicking) {
+                            this.hideTooltip();
+                        }
+                    });
                     trackElement.addEventListener("change", (event) => {
-                        return this.showTrackTooltip(event)
+                        if (event.detail.feature && event.detail.feature.accession) {
+                            if (event.detail.eventtype == "click") {
+                                this.clicking = true;
+                                return this.showTrackTooltip(event)
+                            }
+                            if (event.detail.eventtype == "mouseover") {
+                                if (!this.clicking) {
+                                    return this.showTrackTooltip(event);
+                                }
+                            }
+                        }
                     });
                 }
             }
@@ -292,42 +328,43 @@ class NcatsProtVistaViewer extends HTMLElement {
             minLen = Math.min(...this.annotations.map(each => each.startResidue));
             this.updateLength(maxLen);
         }
-        document.addEventListener("click", (event) => this.hideTooltip(event));
+        document.addEventListener("click", (event) => {
+            const path = event.path.map(element => element.localName || '');
+            if (!path.includes('protvista-manager')) {
+                this.clicking = false;
+                this.hideTooltip();
+            }
+        });
         return {displayStart: minLen, displayEnd: maxLen};
     }
 
-    hideTooltip(event) {
+    hideTooltip() {
         const tooltips = document.querySelectorAll("protvista-tooltip");
-        const path = event.path.map(element => element.localName || '');
-        if (!path.includes('protvista-manager')) {
-            tooltips.forEach(tooltip => tooltip.visible = false);
-        }
+        tooltips.forEach(tooltip => tooltip.visible = false);
     }
 
     showTrackTooltip(event) {
-        if (event.detail.eventtype == "click" && event.detail.feature.accession) {
-            const details = event.detail.feature;
-            this.showTooltip(event.detail.feature.accession, details.tooltipContent || `start: ${details.start}<br/>end: ${details.end}`, event);
+        const details = event.detail.feature;
+        if (details) {
+            this.showTooltip(details.accession, details.tooltipContent || `start: ${details.start}<br/>end: ${details.end}`, event);
         }
     }
 
     showLogoTooltip(event) {
-        if (event.detail.eventtype == "click" && event.detail.feature) {
-            const proportions = this.sequence[event.detail.feature.start - 1];
-            const tooltipContent = proportions.map(each => {
-                return `${each.aa}: ${each.bits.toFixed(4)} bits`
-            }).join("<br/>");
-            this.showTooltip(`Residue ${event.detail.feature.start}`, tooltipContent, event);
-        }
+        const proportions = this.sequence[event.detail.feature.start - 1];
+        const tooltipContent = proportions.map(each => {
+            return `${each.aa}: ${each.bits.toFixed(4)} bits`
+        }).join("<br/>");
+        this.showTooltip(`Residue ${event.detail.feature.start}`, tooltipContent, event);
     }
 
-    showTooltip(title, content, event){
+    showTooltip(title, content, event) {
+        const bounds = event.detail.target.getBoundingClientRect();
         const manBounds = this.manager.getBoundingClientRect();
-        const logoBounds = this.weblogo.getBoundingClientRect();
         this.tooltip.title = title;
         this.tooltip.innerHTML = content;
-        this.tooltip.x = event.detail.coords[0] - window.scrollX - manBounds.x;
-        this.tooltip.y = event.detail.coords[1] - window.scrollY - manBounds.y;
+        this.tooltip.x = bounds.x + bounds.width/2 - manBounds.x;
+        this.tooltip.y = bounds.y + bounds.height/2 - manBounds.y;
         this.tooltip.visible = true;
     }
 

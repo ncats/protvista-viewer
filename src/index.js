@@ -21,14 +21,14 @@ class NcatsProtVistaLegend extends HTMLElement {
         this.appendChild(this.container);
 
         const data = [
-            NcatsProtVistaViewer.mapIO({type: 'Subdomain', name: 'H', startResidue: 1, endResidue: 9}),
-            NcatsProtVistaViewer.mapIO({type: 'alpha-helix', name: 'A', startResidue: 1, endResidue: 9}),
-            NcatsProtVistaViewer.mapIO({type: 'alphaC-beta4 Loop', name: 'B', startResidue: 1, endResidue: 9}),
-            NcatsProtVistaViewer.mapIO({type: 'beta-strand', name: 'C', startResidue: 1, endResidue: 9}),
-            NcatsProtVistaViewer.mapIO({type: 'Activation Loop', name: 'D', startResidue: 1, endResidue: 9}),
-            NcatsProtVistaViewer.mapIO({type: 'Activation Segment', name: 'E', startResidue: 1, endResidue: 9}),
-            NcatsProtVistaViewer.mapIO({type: 'Catalytic Loop', name: 'F', startResidue: 1, endResidue: 9}),
-            NcatsProtVistaViewer.mapIO({type: 'Glycine Loop', name: 'G', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Subdomain', name: 'A', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'alpha-helix', name: 'B', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'alphaC-beta4 Loop', name: 'C', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'beta-strand', name: 'D', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Activation Loop', name: 'E', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Activation Segment', name: 'F', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Catalytic Loop', name: 'G', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'Glycine Loop', name: 'H', startResidue: 1, endResidue: 9}),
             NcatsProtVistaViewer.mapIO({type: 'Linker', name: 'I', startResidue: 1, endResidue: 9}),
             NcatsProtVistaViewer.mapIO({
                 type: 'KeyAA',
@@ -83,6 +83,8 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.navigation = document.createElement("protvista-navigation");
         this.weblogo = document.createElement('ncats-sequence-logo');
         this.tooltip = document.createElement('protvista-tooltip');
+        this.tooltip.style.setProperty("--title-color", '#616161');
+        this.tooltip.style.setProperty("--body-color", '#616161');
         this.maxLength = 10;
         this.navigation.setAttribute('length', this.maxLength);
         this.appendChild(this.manager);
@@ -94,12 +96,12 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.attributeChangedCallback('annotations', '', this.getAttribute('annotations'));
 
         this.weblogo.addEventListener('mouseout', (event) => {
-            if(!this.clicking) {
+            if (!this.clicking) {
                 return this.hideTooltip();
             }
         });
         this.weblogo.addEventListener("change", (event) => {
-            if (event.detail.displaystart || event.detail.displayend){ // zoom event
+            if (event.detail.displaystart || event.detail.displayend) { // zoom event
                 this.clicking = false;
                 return this.hideTooltip();
             }
@@ -109,7 +111,7 @@ class NcatsProtVistaViewer extends HTMLElement {
                     return this.showLogoTooltip(event);
                 }
                 if (event.detail.eventtype == "mouseover") {
-                    if(!this.clicking) {
+                    if (!this.clicking) {
                         return this.showLogoTooltip(event);
                     }
                 }
@@ -309,12 +311,12 @@ class NcatsProtVistaViewer extends HTMLElement {
                     trackElement.data = elements;
 
                     trackElement.addEventListener('mouseout', (event) => {
-                        if(!this.clicking) {
+                        if (!this.clicking) {
                             this.hideTooltip();
                         }
                     });
                     trackElement.addEventListener("change", (event) => {
-                        if (event.detail.displaystart || event.detail.displayend){ // zoom event
+                        if (event.detail.displaystart || event.detail.displayend) { // zoom event
                             this.clicking = false;
                             return this.hideTooltip();
                         }

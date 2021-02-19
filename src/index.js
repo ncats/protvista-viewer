@@ -23,10 +23,10 @@ class NcatsProtVistaLegend extends HTMLElement {
         const data = [
             NcatsProtVistaViewer.mapIO({type: 'Subdomain', name: 'A', startResidue: 1, endResidue: 9}),
             NcatsProtVistaViewer.mapIO({type: 'alpha-helix', name: 'B', startResidue: 1, endResidue: 9}),
-            NcatsProtVistaViewer.mapIO({type: 'alphaC-beta4 Loop', name: 'C', startResidue: 1, endResidue: 9}),
             NcatsProtVistaViewer.mapIO({type: 'beta-strand', name: 'D', startResidue: 1, endResidue: 9}),
-            // NcatsProtVistaViewer.mapIO({type: 'Activation Loop', name: 'E', startResidue: 1, endResidue: 9}),
             NcatsProtVistaViewer.mapIO({type: 'Activation Segment', name: 'F', startResidue: 1, endResidue: 9}),
+            // NcatsProtVistaViewer.mapIO({type: 'Activation Loop', name: 'E', startResidue: 1, endResidue: 9}),
+            NcatsProtVistaViewer.mapIO({type: 'alphaC-beta4 Loop', name: 'C', startResidue: 1, endResidue: 9}),
             NcatsProtVistaViewer.mapIO({type: 'Catalytic Loop', name: 'G', startResidue: 1, endResidue: 9}),
             NcatsProtVistaViewer.mapIO({type: 'Glycine Loop', name: 'H', startResidue: 1, endResidue: 9}),
             NcatsProtVistaViewer.mapIO({type: 'Linker', name: 'I', startResidue: 1, endResidue: 9}),

@@ -117,6 +117,13 @@ class NcatsProtVistaViewer extends HTMLElement {
                 }
             }
         });
+        document.addEventListener("click", (event) => {
+            const path = event.path.map(element => element.localName || '');
+            if (!path.includes('protvista-manager')) {
+                this.clicking = false;
+                this.hideTooltip();
+            }
+        });
     }
 
     static get observedAttributes() {
@@ -339,13 +346,6 @@ class NcatsProtVistaViewer extends HTMLElement {
             minLen = Math.min(...this.annotations.map(each => each.startResidue));
             this.updateLength(maxLen);
         }
-        document.addEventListener("click", (event) => {
-            const path = event.path.map(element => element.localName || '');
-            if (!path.includes('protvista-manager')) {
-                this.clicking = false;
-                this.hideTooltip();
-            }
-        });
         return {displayStart: minLen, displayEnd: maxLen};
     }
 

@@ -99,7 +99,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     }
 
     get maxBits() {
-        return 4.2;
+        return 4.35;
     }
 
     refresh() {

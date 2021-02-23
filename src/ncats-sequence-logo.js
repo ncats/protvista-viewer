@@ -99,7 +99,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     }
 
     get maxBits() {
-        return 4.35;
+        return 4.3219;
     }
 
     refresh() {
@@ -163,7 +163,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
             this.line_path.data([lineData])
                 .attr("d", line()
                     .x(d => this.getXFromSeqPosition(d.position) + (ftWidth / 2))
-                    .y(d => (1 - d.y) * this.heightFactor))
+                    .y(d => (1 - d.y) * this.heightFactor + 2))
                 .attr("stroke", "black")
                 .attr("fill", "none");
 

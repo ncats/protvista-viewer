@@ -63,7 +63,11 @@ export class NcatsProtVistaViewer extends HTMLElement {
         container.className = "trackContainer";
         const label = document.createElement('div');
         label.className = 'trackLabel';
-        label.innerText = labelText;
+        if(labelText.length > 0) {
+            label.innerText = labelText;
+        }else{
+            label.innerHTML = '&nbsp;';
+        }
         container.appendChild(label);
         container.appendChild(trackElement);
         return container;

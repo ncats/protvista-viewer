@@ -5,9 +5,15 @@ export class NcatsProtVistaViewer extends HTMLElement {
         super();
     }
 
+    refresh() {
+        this.updateAnnotations(this.annotations);
+    }
+
     createStyle(){
         const style = document.createElement('style');
-        style.textContent = '.trackLabel{width:100px; align-self:center; text-align:end; font-size:small;} .trackContainer{display:flex;}';
+        style.textContent = '' +
+            '.trackLabel{min-width:100px; max-width:100px; align-self:center; text-align:end; font-size:small;} ' +
+            '.trackContainer{display:flex;}';
         return style;
     }
 
@@ -99,6 +105,8 @@ export class NcatsProtVistaViewer extends HTMLElement {
                 this.hideTooltip();
             }
         });
+
+        window.onresize = refresh;
     }
 
     static get observedAttributes() {

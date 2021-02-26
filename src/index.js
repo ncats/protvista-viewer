@@ -66,6 +66,7 @@ class NcatsProtVistaLegend extends HTMLElement {
             theRow.appendChild(track);
 
             track.setAttribute('id', 'track-' + row.accession);
+            // track.margin.left = track.margin.right = 0;
             track.data = [row];
             track.style = 'width:50px';
         });
@@ -87,6 +88,7 @@ class NcatsProtVistaViewer extends HTMLElement {
         this.tooltip.style.setProperty("--body-color", '#616161');
         this.maxLength = 10;
         this.navigation.setAttribute('length', this.maxLength);
+        this.navigation.margin.left = 30;
         this.appendChild(this.manager);
         this.manager.appendChild(this.tooltip);
         this.manager.appendChild(this.navigation);
@@ -316,6 +318,7 @@ class NcatsProtVistaViewer extends HTMLElement {
                         trackElement.setAttribute('layout', 'non-overlapping');
                     }
                     this.manager.appendChild(trackElement);
+                   // trackElement.margin.left = '30px';
                     trackElement.data = elements;
 
                     trackElement.addEventListener('mouseout', (event) => {

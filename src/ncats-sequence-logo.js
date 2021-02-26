@@ -1,4 +1,4 @@
-import {line, select} from "d3";
+import {axisLeft, axisBottom, line, scaleLinear, select} from "d3";
 import ProtvistaZoomable from "protvista-zoomable";
 import {getPathMap} from "./pathmap";
 
@@ -62,6 +62,8 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     }
 
     _createSequence() {
+        this.margin.left = 30;
+
         super.svg = select(this)
             .append("div")
             .attr("style", `height: ${this._height}px`)
@@ -72,8 +74,6 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
             .attr("height", this._height);
 
         this.seq_bg = super.svg.append("g").attr("class", "background");
-
-        this.axis = super.svg.append("g").attr("class", "x axis");
 
         this.seq_g = super.svg
             .append("g")
@@ -86,6 +86,20 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
             .attr("transform", `translate(0,${this.standardOffset()})`)
             .append("path");
 
+
+        this.marginBlock = super.svg.append("rect")
+            .attr("height", this._height)
+            .attr("width", this.margin.left)
+            .attr('fill','white');
+
+        this.x_axis_g = super.svg.append("g").attr("class", "x axis")
+            .attr("transform", `translate(${this.margin.left},${this._height - 1})`);
+
+        this.y_axis_g = super.svg.append("g").attr("class", "y axis")
+            .attr("transform", `translate(${this.margin.left},-1)`)
+            .attr("style", "background-color:white;");
+
+
         this.trackHighlighter.appendHighlightTo(this.svg);
         this.refresh();
     }
@@ -95,15 +109,21 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     }
 
     get heightFactor() {
-        return 100 / this.maxBits;
+        return this._height / this.maxBits;
     }
 
     get maxBits() {
         return 4.3219;
     }
 
+    get yScale() {
+        return scaleLinear()
+            .domain([0, this.maxBits])
+            .range([this.height, 0]);
+    }
+
     refresh() {
-        if (this.axis) {
+        if (this.x_axis_g) {
             const ftWidth = this.getSingleBaseWidth();
             const sequenceOpacity = ftWidth - 10;
             const lineOpacity = 1 - sequenceOpacity;
@@ -141,6 +161,11 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 console.log('error: ' + JSON.stringify(e));
             }
 
+            this.xAxis = axisBottom(this.xScale).ticks(5);
+            this.yAxis = axisLeft(this.yScale).tickValues([1,2,3,4]);
+            this.x_axis_g.call(this.xAxis);
+            this.y_axis_g.call(this.yAxis);
+
             this.bases = this.seq_g.selectAll("path.base").data(bases, d => d.start);
             this.bases.enter()
                 .append("path")
@@ -150,12 +175,12 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 .attr("fill", d => this.colorByChemistry(d.aa))
                 .attr('transform', d => {
                     return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
-                    + (100 - (this.heightFactor * (d.bits + d.yOffset)))}) scale(${ftWidth / 100}, ${d.bits / this.maxBits})`;
+                    + (this._height - (this.heightFactor * (d.bits + d.yOffset)))}) scale(${ftWidth / this._height * this._height / 100}, ${d.bits / this.maxBits * this._height / 100})`;
                 }).call(this.bindEvents, this);
 
             this.bases.attr('transform', d => {
                 return `translate(${this.getXFromSeqPosition(d.start)}, ${-this.standardOffset()
-                + (100 - (this.heightFactor * (d.bits + d.yOffset)))}) scale(${ftWidth / 100}, ${d.bits / this.maxBits})`;
+                + (this._height - (this.heightFactor * (d.bits + d.yOffset)))}) scale(${ftWidth / this._height * this._height / 100}, ${d.bits / this.maxBits * this._height / 100})`;
             }).call(this.bindEvents, this);
 
             this.bases.exit().remove();

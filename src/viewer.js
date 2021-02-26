@@ -106,7 +106,7 @@ export class NcatsProtVistaViewer extends HTMLElement {
             }
         });
 
-        window.onresize = refresh;
+        window.onresize = this.refresh;
     }
 
     static get observedAttributes() {

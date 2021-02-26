@@ -5,30 +5,33 @@ export class NcatsProtVistaViewer extends HTMLElement {
         super();
     }
 
-    connectedCallback() {
-        this.manager = document.createElement("protvista-manager");
-        this.navigation = document.createElement("protvista-navigation");
-        this.weblogo = document.createElement('ncats-sequence-logo');
-        this.tooltip = document.createElement('protvista-tooltip');
-        this.tooltip.style.setProperty("--title-color", '#616161');
-        this.tooltip.style.setProperty("--body-color", '#616161');
-        this.maxLength = 10;
-        this.navigation.setAttribute('length', this.maxLength);
-        this.navigation.margin.left = 30;
-        this.appendChild(this.manager);
-        this.manager.appendChild(this.tooltip);
-        this.manager.appendChild(this.navigation);
-        this.manager.appendChild(this.weblogo);
-        this.weblogo.setAttribute('height', '100');
-        this.attributeChangedCallback('sequence', '', this.getAttribute("sequence"));
-        this.attributeChangedCallback('annotations', '', this.getAttribute('annotations'));
+    createStyle(){
+        const style = document.createElement('style');
+        style.textContent = '.trackLabel{width:100px; align-self:center; text-align:end; font-size:small;} .trackContainer{display:flex;}';
+        return style;
+    }
 
-        this.weblogo.addEventListener('mouseout', (event) => {
+    createManager(){
+        return document.createElement("protvista-manager");
+    }
+
+    createNavigation(){
+        const navigation = document.createElement("protvista-navigation");
+        navigation.setAttribute('length', this.maxLength);
+        navigation.margin.left = 30;
+        return navigation;
+    }
+
+    createWebLogo(){
+        const weblogo = document.createElement('ncats-sequence-logo');
+        weblogo.setAttribute('height', '100');
+
+        weblogo.addEventListener('mouseout', (event) => {
             if (!this.clicking) {
                 return this.hideTooltip();
             }
         });
-        this.weblogo.addEventListener("change", (event) => {
+        weblogo.addEventListener("change", (event) => {
             if (event.detail.displaystart || event.detail.displayend) { // zoom event
                 this.clicking = false;
                 return this.hideTooltip();
@@ -45,6 +48,46 @@ export class NcatsProtVistaViewer extends HTMLElement {
                 }
             }
         });
+        return weblogo;
+    }
+
+    createTooltip(){
+        const tooltip = document.createElement('protvista-tooltip');
+        tooltip.style.setProperty("--title-color", '#616161');
+        tooltip.style.setProperty("--body-color", '#616161');
+        return tooltip;
+    }
+
+    wrapElement(labelText, trackElement){
+        const container = document.createElement('div');
+        container.className = "trackContainer";
+        const label = document.createElement('div');
+        label.className = 'trackLabel';
+        label.innerText = labelText;
+        container.appendChild(label);
+        container.appendChild(trackElement);
+        return container;
+    }
+
+    connectedCallback() {
+        this.maxLength = 10;
+        this.appendChild(this.createStyle());
+
+        this.manager = this.createManager();
+        this.appendChild(this.manager);
+
+        this.navigation = this.createNavigation();
+        this.manager.appendChild(this.wrapElement('', this.navigation));
+
+        this.weblogo = this.createWebLogo();
+        this.manager.appendChild(this.wrapElement('Ortholog Variants', this.weblogo));
+
+        this.tooltip = this.createTooltip();
+        this.manager.appendChild(this.tooltip);
+
+        this.attributeChangedCallback('sequence', '', this.getAttribute("sequence"));
+        this.attributeChangedCallback('annotations', '', this.getAttribute('annotations'));
+
         document.addEventListener("click", (event) => {
             const path = event.path.map(element => element.localName || '');
             if (!path.includes('protvista-manager')) {
@@ -68,7 +111,7 @@ export class NcatsProtVistaViewer extends HTMLElement {
             }
             if (this.annotationMap) {
                 this.annotationMap.forEach((elements, track) => {
-                    const trackElement = this.manager.querySelector('#' + track);
+                    const trackElement = this.manager.querySelector('#' + this.name2id(track));
                     if (trackElement) {
                         trackElement.setAttribute('length', this.maxLength);
                     }
@@ -77,19 +120,25 @@ export class NcatsProtVistaViewer extends HTMLElement {
         }
     }
 
+    get nameSubdomains() {return 'Subdomains';}
+    get nameSecondary() {return 'Secondary Structure';}
+    get nameFunctional() {return 'Functional Regions';}
+    get nameMotifs() {return 'Motifs';}
+    name2id(name) { return name.replace(' ', '_');}
+
     typeToTrack(type) {
 
         if (['Subdomain', 'N-Lobe', 'C-Lobe'].includes(type)) {
-            return "subdomain";
+            return "Subdomains";
         }
         if (["alpha-helix", "beta-strand", 'alphaC-beta4 Loop', 'Glycine Loop', 'Linker'].includes(type)) {
-            return "structural";
+            return "Secondary Structure";
         }
         if (['KeyAA', 'Motif'].includes(type)) {
-            return "smallStuff";
+            return "Motifs";
         }
         if (['Catalytic Loop', 'Activation Loop', 'Activation Segment', 'Gatekeeper', 'CMGC Insert'].includes(type)) {
-            return 'functional';
+            return 'Functional Regions';
         }
         if (["R-Spine", "C-Spine", "R-Spine Shell"].includes(type)) {
             return 'temp';
@@ -115,13 +164,13 @@ export class NcatsProtVistaViewer extends HTMLElement {
 
         let temp = this.annotationMap.get('temp');
 
-        let smallStuff = this.annotationMap.get('smallStuff');
+        let motifs = this.annotationMap.get(this.nameMotifs);
         const cSpine = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'R-Spine'), 'R-Spine');
         const rSpine = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'C-Spine'), 'C-Spine');
         const rSpineShell = this.convertToDiscontinuousElement(temp.filter(each => each.type == 'R-Spine Shell'), 'R-Spine Shell');
-        smallStuff.push(cSpine);
-        smallStuff.push(rSpine);
-        smallStuff.push(rSpineShell);
+        motifs.push(cSpine);
+        motifs.push(rSpine);
+        motifs.push(rSpineShell);
 
         this.annotationMap.delete('temp');
     }
@@ -161,16 +210,15 @@ export class NcatsProtVistaViewer extends HTMLElement {
         let maxLen = 0;
         let minLen = 0;
         if (this.manager) {
-            for (const track of ['subdomain', 'structural', 'functional', 'smallStuff']) {
+            for (const track of [this.nameSubdomains, this.nameSecondary, this.nameFunctional, this.nameMotifs]) {
                 const elements = this.annotationMap.get(track);
                 if (elements && elements.length > 0) {
                     const trackElement = document.createElement("protvista-track");
-                    trackElement.setAttribute('id', track);
-                    if (track == 'subdomain') {
+                    trackElement.setAttribute('id', this.name2id(track));
+                    if (track == this.nameSubdomains) {
                         trackElement.setAttribute('layout', 'non-overlapping');
                     }
-                    this.manager.appendChild(trackElement);
-                    // trackElement.margin.left = '30px';
+                    this.manager.appendChild(this.wrapElement(track, trackElement));
                     trackElement.data = elements;
 
                     trackElement.addEventListener('mouseout', (event) => {

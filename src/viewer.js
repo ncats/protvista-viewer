@@ -5,10 +5,6 @@ export class NcatsProtVistaViewer extends HTMLElement {
         super();
     }
 
-    refresh() {
-        this.updateAnnotations(this.annotations);
-    }
-
     createStyle(){
         const style = document.createElement('style');
         style.textContent = '' +
@@ -105,8 +101,6 @@ export class NcatsProtVistaViewer extends HTMLElement {
                 this.hideTooltip();
             }
         });
-
-        window.onresize = this.refresh;
     }
 
     static get observedAttributes() {
@@ -225,7 +219,8 @@ export class NcatsProtVistaViewer extends HTMLElement {
             for (const track of [this.nameSubdomains, this.nameSecondary, this.nameFunctional, this.nameMotifs]) {
                 const elements = this.annotationMap.get(track);
                 if (elements && elements.length > 0) {
-                    const trackElement = document.createElement("protvista-track");
+                    const trackElement = this.manager.querySelector('#' + this.name2id(track))
+                                            || document.createElement("protvista-track");
                     trackElement.setAttribute('id', this.name2id(track));
                     if (track == this.nameSubdomains) {
                         trackElement.setAttribute('layout', 'non-overlapping');

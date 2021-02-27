@@ -1,46 +1,25 @@
 import ProtVistaManager from "protvista-manager";
+import ProtvistaTrack from "protvista-track";
 import ProtVistaNavigation from "protvista-navigation";
 import NcatsSequenceLogo from "./ncats-sequence-logo";
+import ProtvistaTooltip from "protvista-tooltip";
+import {NcatsProtVistaLegend} from "./legend";
+import {NcatsProtVistaViewer} from "./viewer";
 
-class NcatsProtVistaViewer extends HTMLElement {
-    constructor() {
-        super();
-    }
-
-    connectedCallback() {
-        this.manager = document.createElement("protvista-manager");
-        this.navigation = document.createElement("protvista-navigation");
-        this.weblogo = document.createElement('ncats-sequence-logo');
-        this.navigation.setAttribute('length', '100');
-        this.navigation.setAttribute('displaystart', '0');
-        this.navigation.setAttribute('displayend', '75');
-        this.appendChild(this.manager);
-        this.manager.appendChild(this.navigation);
-        this.navigation.appendChild(this.weblogo);
-        this.weblogo.setAttribute('height', '100');
-        this.attributeChangedCallback('sequence', '', this.getAttribute("sequence"));
-    }
-
-    static get observedAttributes() {
-        return ["sequence"];
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        if(name == "sequence") {
-            this.sequence = JSON.parse(newValue);
-            if(this.sequence) {
-                if (this.navigation) {
-                    this.navigation.setAttribute('length', this.sequence.length);
-                }
-                if (this.weblogo) {
-                    this.weblogo.setSequence(this.sequence);
-                }
-            }
-        }
-    }
+const loadComponent = () => {
+    window.customElements.define('protvista-manager', ProtVistaManager);
+    window.customElements.define('protvista-navigation', ProtVistaNavigation);
+    window.customElements.define('protvista-track', ProtvistaTrack);
+    window.customElements.define('protvista-tooltip', ProtvistaTooltip);
+    window.customElements.define('ncats-sequence-logo', NcatsSequenceLogo);
+    window.customElements.define('ncats-protvista-viewer', NcatsProtVistaViewer);
+    window.customElements.define('ncats-protvista-legend', NcatsProtVistaLegend);
+};
+// Conditional loading of polyfill
+if (window.customElements) {
+    loadComponent();
+} else {
+    document.addEventListener("WebComponentsReady", () => {
+        loadComponent();
+    });
 }
-
-window.customElements.define('protvista-manager', ProtVistaManager);
-window.customElements.define('protvista-navigation', ProtVistaNavigation);
-window.customElements.define('ncats-sequence-logo', NcatsSequenceLogo);
-window.customElements.define('ncats-protvista-viewer', NcatsProtVistaViewer);

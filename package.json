@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/KeithKelleher/protvista-viewer.git"
+    "url": "git+https://github.com/ncats/protvista-viewer.git"
   },
   "keywords": [
     "ProtVista",
@@ -34,7 +34,7 @@
   "author": "Keith Kelleher",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/KeithKelleher/protvista-viewer/issues"
+    "url": "https://github.com/ncats/protvista-viewer/issues"
   },
-  "homepage": "https://github.com/KeithKelleher/protvista-viewer#readme"
+  "homepage": "https://github.com/ncats/protvista-viewer#readme"
 }

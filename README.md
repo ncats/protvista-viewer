@@ -69,3 +69,7 @@ if (isPlatformBrowser(this.platformID)) {
 ```
 <ncats-protvista-viewer class="container" #weblogo></ncats-protvista-viewer>
 ```
+
+### Contact
+Author: Keith Kelleher
+Issues: Please post bugs and comments to the Issues tab

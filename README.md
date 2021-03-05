@@ -71,5 +71,5 @@ if (isPlatformBrowser(this.platformID)) {
 ```
 
 ### Contact
-Author: Keith Kelleher
-Issues: Please post bugs and comments to the Issues tab
+* Author: Keith Kelleher
+* Issues: Please post bugs and comments to the Issues tab

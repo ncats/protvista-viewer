@@ -113,7 +113,7 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
     }
 
     get maxBits() {
-        return 4.3219;
+        return 4.322;
     }
 
     get yScale() {

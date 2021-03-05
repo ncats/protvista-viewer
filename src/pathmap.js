@@ -1,4 +1,5 @@
 // https://danmarshall.github.io/google-font-to-svg-path/ font = ALATA
+// Except for letter I, that was something else, because ALATA had no top and bottom bars, so it just shows up as a black box after running normalizePaths.js
 
 export function getPathMap() {
     const pathMap = new Map();

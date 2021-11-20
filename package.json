@@ -10,6 +10,7 @@
     "build:es": "tsc",
     "build": "webpack --mode=production && yarn build:es",
     "watch": "webpack --mode=development -w",
+    "pub": "yarn build && npm version patch && npm publish",
     "link-all": "yarn link protvista-interpro-adapter protvista-feature-adapter protvista-interpro-track protvista-filter protvista-manager protvista-navigation protvista-proteomics-adapter protvista-sequence protvista-structure-adapter protvista-tooltip protvista-track protvista-variation protvista-variation-adapter protvista-variation-graph protvista-zoomable protvista-datatable protvista-structure data-loader",
     "add-all": "yarn add protvista-feature-adapter protvista-filter protvista-manager protvista-navigation protvista-proteomics-adapter protvista-sequence protvista-structure-adapter protvista-tooltip protvista-track protvista-variation protvista-variation-adapter protvista-variation-graph protvista-zoomable protvista-datatable protvista-structure data-loader",
     "start": "webpack serve --mode=development",

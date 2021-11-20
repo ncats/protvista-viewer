@@ -44,7 +44,10 @@ const config = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: 'src/icons', to: 'es/icons' }],
+      patterns: [
+        { from: 'src/icons', to: 'es/icons' },
+        { from: 'src/models', to: 'es/models' }
+        ],
     }),
   ],
   devServer: {

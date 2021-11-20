@@ -11,6 +11,7 @@ import ProtvistaVariation from 'protvista-variation';
 import ProtvistaVariationGraph from 'protvista-variation-graph';
 import ProtvistaFilter from 'protvista-filter';
 import ProtvistaManager from 'protvista-manager';
+import NcatsSequenceLogo from './models/ncats-sequence-logo';
 
 import { load } from 'data-loader';
 // adapters
@@ -19,6 +20,8 @@ import { transformData as _transformDataProteomicsAdapter } from 'protvista-prot
 import { transformData as _transformDataStructureAdapter } from 'protvista-structure-adapter';
 import { transformData as _transformDataVariationAdapter } from 'protvista-variation-adapter';
 import { transformData as _transformDataInterproAdapter } from 'protvista-interpro-adapter';
+import { transformData as _transformDataOrthoVariantAdapter } from './adapters/ncats-variant-adapter';
+import { transformData as _transformDataAnnotationAdapter } from './adapters/ncats-annotation-adapter';
 
 import defaultConfig from './config.json';
 import _ProtvistaUniprotStructure from './protvista-uniprot-structure';
@@ -31,6 +34,8 @@ import loaderIcon from './icons/spinner.svg';
 import protvistaStyles from './styles/protvista-styles';
 import loaderStyles from './styles/loader-styles';
 
+export const transformDataAnnotationAdapter = _transformDataAnnotationAdapter;
+export const transformDataOrthoVariantAdapter = _transformDataOrthoVariantAdapter;
 export const transformDataFeatureAdapter = _transformDataFeatureAdapter;
 export const transformDataProteomicsAdapter = _transformDataProteomicsAdapter;
 export const transformDataStructureAdapter = _transformDataStructureAdapter;
@@ -47,18 +52,23 @@ const adapters = {
   'protvista-proteomics-adapter': transformDataProteomicsAdapter,
   'protvista-structure-adapter': transformDataStructureAdapter,
   'protvista-variation-adapter': transformDataVariationAdapter,
+  'ncats-annotation-adapter': transformDataAnnotationAdapter,
+  'ncats-variant-adapter': transformDataOrthoVariantAdapter,
 };
 
 type TrackType =
   | 'protvista-track'
   | 'protvista-variation'
   | 'protvista-variation-graph'
-  | 'protvista-interpro-track';
+  | 'protvista-interpro-track'
+  | 'ncats-sequence-logo'
+  | 'ncats-ortholog-variants';
 
 type ProtvistaTrackConfig = {
   name: string;
+  instructions: string;
   label: string;
-  filter: string;
+  filter: string | string[];
   trackType: TrackType;
   data: {
     url: string;
@@ -66,7 +76,9 @@ type ProtvistaTrackConfig = {
       | 'protvista-feature-adapter'
       | 'protvista-structure-adapter'
       | 'protvista-proteomics-adapter'
-      | 'protvista-variation-adapter';
+      | 'protvista-variation-adapter'
+      | 'ncats-annotation-adapter'
+      | 'ncats-variant-adapter';
   }[];
   tooltip: string;
   color?: string;
@@ -153,6 +165,7 @@ class ProtvistaUniprot extends LitElement {
     loadComponent('protvista-filter', ProtvistaFilter);
     loadComponent('protvista-manager', ProtvistaManager);
     loadComponent('protvista-uniprot-structure', _ProtvistaUniprotStructure);
+    loadComponent('ncats-sequence-logo', NcatsSequenceLogo);
   }
 
   async _loadData() {
@@ -210,7 +223,15 @@ class ProtvistaUniprot extends LitElement {
               const filteredData =
                 Array.isArray(transformedData) && filter
                   ? transformedData.filter(
-                      ({ type }: { type?: string }) => type === filter
+                      (each: any) => {
+                        if (!each) {
+                          return 0;
+                        }
+                        if (each.type && Array.isArray(filter)) {
+                          return filter.includes(each.type);
+                        }
+                        return each.type === filter;
+                      }
                     )
                   : transformedData;
               if (!filteredData) {
@@ -485,7 +506,8 @@ class ProtvistaUniprot extends LitElement {
                               ? this.getFilterComponent(
                                   `${category.name}-${track.name}`
                                 )
-                              : track.label}
+                              : track.label} 
+                            <div class="track-instructions">${track.instructions ? `${track.instructions}` : ''}</div>
                           </div>
                           <div
                             class="track-content"
@@ -517,6 +539,7 @@ class ProtvistaUniprot extends LitElement {
                             <div class="track-label" title="${item.accession}">
                               ${item.accession}
                             </div>
+                            Fuck
                             <div
                               class="track-content"
                               data-id="track_${item.accession}"
@@ -555,7 +578,7 @@ class ProtvistaUniprot extends LitElement {
               ></protvista-uniprot-structure>
             `
           : ''}
-        <protvista-tooltip />
+        <protvista-tooltip id="protvista-uniprot-tooltip"/>
       </protvista-manager>
     `;
   }
@@ -659,6 +682,20 @@ class ProtvistaUniprot extends LitElement {
           >
           </protvista-variation-graph>
         `;
+      case 'ncats-sequence-logo':
+        return html`
+        <ncats-sequence-logo height="100" length="${this.sequence?.length}"
+            displaystart="${this.displayCoordinates?.start}"
+            displayend="${this.displayCoordinates?.end}"
+            id="track-${id}"
+        ></ncats-sequence-logo>`;
+      case 'ncats-ortholog-variants':
+        return html`
+        <ncats-sequence-logo length="${this.sequence?.length}"
+            displaystart="${this.displayCoordinates?.start}"
+            displayend="${this.displayCoordinates?.end}"
+            id="track-${id}"
+        ></ncats-sequence-logo>`;
       default:
         console.warn('No Matching ProtvistaTrack Found.');
         break;

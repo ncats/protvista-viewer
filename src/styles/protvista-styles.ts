@@ -69,6 +69,12 @@ export default css`
     background-color: #d9faff;
   }
 
+  .track-instructions {    
+    margin-left: 10px;
+    opacity: 0.5;
+    font-size: small;
+  }
+
   protvista-track {
     border-top: 1px solid #d9faff;
   }

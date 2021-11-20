@@ -9,12 +9,15 @@ import { transformDataProteomicsAdapter as _transformDataProteomicsAdapter } fro
 import { transformDataStructureAdapter as _transformDataStructureAdapter } from './protvista-uniprot';
 import { transformDataVariationAdapter as _transformDataVariationAdapter } from './protvista-uniprot';
 import { transformDataInterproAdapter as _transformDataInterproAdapter } from './protvista-uniprot';
+import { transformDataAnnotationAdapter as _transformDataAnnotationAdapter } from './protvista-uniprot';
 
 export const transformDataFeatureAdapter = _transformDataFeatureAdapter;
 export const transformDataProteomicsAdapter = _transformDataProteomicsAdapter;
 export const transformDataStructureAdapter = _transformDataStructureAdapter;
 export const transformDataVariationAdapter = _transformDataVariationAdapter;
 export const transformDataInterproAdapter = _transformDataInterproAdapter;
+export const transformDataAnnotationAdapter = _transformDataAnnotationAdapter;
+
 export const ProtvistaUniprotStructure = _ProtvistaUniprotStructure;
 export const DownloadPanel = _DownloadPanel;
 

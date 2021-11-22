@@ -13,7 +13,7 @@
           "data": [
             {
               "adapter": "ncats-variant-adapter",
-              "url": "http://ncatsidg-dev.appspot.com/variants?uniprot={accession}"
+              "url": "https://ncatsidg-dev.appspot.com/variants?uniprot={accession}"
             }
           ],
           "tooltip": "TODO"
@@ -33,7 +33,7 @@
           "data": [
             {
               "adapter": "ncats-annotation-adapter",
-              "url": "http://ncatsidg-dev.appspot.com/annotations?uniprot={accession}"
+              "url": "https://ncatsidg-dev.appspot.com/annotations?uniprot={accession}"
             }
           ],
           "tooltip": "TODO"
@@ -46,7 +46,7 @@
           "data": [
             {
               "adapter": "ncats-annotation-adapter",
-              "url": "http://ncatsidg-dev.appspot.com/annotations?uniprot={accession}"
+              "url": "https://ncatsidg-dev.appspot.com/annotations?uniprot={accession}"
             }
           ],
           "tooltip": "TODO"
@@ -59,7 +59,7 @@
           "data": [
             {
               "adapter": "ncats-annotation-adapter",
-              "url": "http://ncatsidg-dev.appspot.com/annotations?uniprot={accession}"
+              "url": "https://ncatsidg-dev.appspot.com/annotations?uniprot={accession}"
             }
           ],
           "tooltip": "TODO"
@@ -72,7 +72,7 @@
           "data": [
             {
               "adapter": "ncats-annotation-adapter",
-              "url": "http://ncatsidg-dev.appspot.com/annotations?uniprot={accession}"
+              "url": "https://ncatsidg-dev.appspot.com/annotations?uniprot={accession}"
             }
           ],
           "tooltip": "TODO"

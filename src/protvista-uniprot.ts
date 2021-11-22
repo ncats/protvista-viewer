@@ -458,7 +458,7 @@ class ProtvistaUniprot extends LitElement {
       ${this.cssStyle}
       <protvista-manager
         attributes="length displaystart displayend highlight activefilters filters"
-        additionalsubscribers="protvista-structure"
+        additionalsubscribers="protvista-structure" id="protvista-manager-obj"
       >
         <div class="nav-container">
           <div class="action-buttons">
@@ -617,9 +617,10 @@ class ProtvistaUniprot extends LitElement {
     tooltip.visible = true;
 
     if (e.detail?.coords) {
+      const manBounds = document.getElementById('protvista-manager-obj').getBoundingClientRect();
       const [x, y] = e.detail.coords;
-      tooltip.x = x;
-      tooltip.y = y;
+      tooltip.x = x - manBounds.x;
+      tooltip.y = y - manBounds.y;
     }
   }
 

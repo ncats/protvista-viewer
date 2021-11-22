@@ -1,7 +1,7 @@
 {
   "name": "ncats-protvista-uniprot",
   "description": "NCATS version of the ProtVista tool",
-  "version": "2.8.10",
+  "version": "2.8.11",
   "files": [
     "dist",
     "src"

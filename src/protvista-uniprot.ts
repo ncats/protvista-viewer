@@ -12,6 +12,7 @@ import ProtvistaVariationGraph from 'protvista-variation-graph';
 import ProtvistaFilter from 'protvista-filter';
 import ProtvistaManager from 'protvista-manager';
 import NcatsSequenceLogo from './models/ncats-sequence-logo';
+import * as d3 from 'd3';
 
 import { load } from 'data-loader';
 // adapters
@@ -595,6 +596,8 @@ class ProtvistaUniprot extends LitElement {
       return;
     }
 
+    let pos = d3.select('#protvista-manager-obj').node().getBoundingClientRect();
+
     tooltip.title = `${d.type} ${d.start}-${d.end}`;
     tooltip.innerHTML = d.tooltipContent;
     tooltip.visible = true;
@@ -607,12 +610,14 @@ class ProtvistaUniprot extends LitElement {
       ]) {
         console.log(prop + ': ' + manBounds[prop]);
       }
+      console.log(pos);
+      console.log(manBounds.getBoundingClientRect());
+      console.log(window.pageYOffset);
+      console.log(window.pageXOffset);
       const [x, y] = e.detail.coords;
 
-      const distY = window.pageYOffset + manBounds.getBoundingClientRect().top;
-
       tooltip.x = x;
-      tooltip.y = y - distY;
+      tooltip.y = y;
     }
   }
 

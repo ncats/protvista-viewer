@@ -37,9 +37,12 @@ class NcatsSequenceLogo extends ProtvistaZoomable {
                 tooltip.visible = true;
 
                 if (e.detail?.coords) {
+                    const managerObj = document.getElementById('protvista-manager-obj');
+                    const bounds = managerObj.getBoundingClientRect();
                     const [x, y] = e.detail.coords;
-                    tooltip.x = x;
-                    tooltip.y = y;
+
+                    tooltip.x = x - (window.pageXOffset + bounds.x) + managerObj.offsetLeft;
+                    tooltip.y = y - (window.pageYOffset + bounds.y) + managerObj.offsetTop;
                 }
             }
         });

@@ -603,23 +603,12 @@ class ProtvistaUniprot extends LitElement {
     tooltip.visible = true;
 
     if (e.detail?.coords) {
-      const manBounds = document.getElementById('protvista-manager-obj');
-      for (let prop of [
-        'offsetTop',
-        'offsetLeft'
-      ]) {
-        console.log(prop + ': ' + manBounds[prop]);
-      }
-      console.log(pos);
-      console.log(manBounds.getBoundingClientRect());
-      console.log(window.pageYOffset);
-      console.log(window.pageXOffset);
-      console.log(e.detail.coords);
-
+      const managerObj = document.getElementById('protvista-manager-obj');
+      const bounds = managerObj.getBoundingClientRect();
       const [x, y] = e.detail.coords;
 
-      tooltip.x = x;
-      tooltip.y = y - (window.pageYOffset + pos.y) + manBounds.offsetTop;
+      tooltip.x = x - (window.pageXOffset + bounds.x) + managerObj.offsetLeft;
+      tooltip.y = y - (window.pageYOffset + bounds.y) + managerObj.offsetTop;
     }
   }
 

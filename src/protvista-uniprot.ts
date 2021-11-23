@@ -625,8 +625,8 @@ class ProtvistaUniprot extends LitElement {
         console.log(prop + ': ' + manBounds[prop]);
       }
       const [x, y] = e.detail.coords;
-      tooltip.x = x - manBounds.offsetLeft + 32;
-      tooltip.y = y - manBounds.offsetTop - 114;
+      tooltip.x = x + manBounds.offsetLeft + 32;
+      tooltip.y = y + manBounds.offsetTop - 114;
     }
   }
 

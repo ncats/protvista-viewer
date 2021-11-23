@@ -603,16 +603,7 @@ class ProtvistaUniprot extends LitElement {
       const manBounds = document.getElementById('protvista-manager-obj');
       for (let prop of [
         'offsetTop',
-        'offsetHeight',
-        'clientHeight',
-        'scrollHeight',
-        'clientY',
-        'pageY',
-        'offsetWidth',
-        'clientWidth',
-        'scrollWidth',
-        'clientX',
-        'pageX'
+        'offsetLeft'
       ]) {
         console.log(prop + ': ' + manBounds[prop]);
       }

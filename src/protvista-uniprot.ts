@@ -609,10 +609,10 @@ class ProtvistaUniprot extends LitElement {
       }
       const [x, y] = e.detail.coords;
 
-      const distX = window.pageYOffset + manBounds.getBoundingClientRect().top;
+      const distY = window.pageYOffset + manBounds.getBoundingClientRect().top;
 
-      tooltip.x = x - distX;
-      tooltip.y = y;
+      tooltip.x = x;
+      tooltip.y = y - distY;
     }
   }
 

@@ -625,7 +625,10 @@ class ProtvistaUniprot extends LitElement {
         console.log(prop + ': ' + manBounds[prop]);
       }
       const [x, y] = e.detail.coords;
-      tooltip.x = x;
+
+      const distX = window.pageYOffset + manBounds.getBoundingClientRect().top;
+
+      tooltip.x = x - distX;
       tooltip.y = y;
     }
   }

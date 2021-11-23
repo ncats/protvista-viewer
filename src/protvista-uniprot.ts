@@ -617,25 +617,9 @@ class ProtvistaUniprot extends LitElement {
     tooltip.visible = true;
 
     if (e.detail?.coords) {
-      const manBounds = document.getElementById('protvista-manager-obj');
-      for (let prop of [
-        'offsetTop',
-        'offsetHeight',
-        'clientHeight',
-        'scrollHeight',
-        'clientY',
-        'pageY',
-        'offsetWidth',
-        'clientWidth',
-        'scrollWidth',
-        'clientX',
-        'pageX'
-      ]) {
-        console.log(prop + ': ' + manBounds[prop]);
-      }
       const [x, y] = e.detail.coords;
-      tooltip.x = x - manBounds.offsetLeft - 321;
-      tooltip.y = y - manBounds.offsetTop + 320;
+      tooltip.x = x;
+      tooltip.y = y;
     }
   }
 

@@ -8,7 +8,7 @@
         {
           "name": "Variants",
           "label": "Variant WebLogo",
-          "instructions": "Zoom in for amino acid frequencies",
+          "instructions": "Zoom in for amino acid frequencies<div class='two-column-list'><div class='one-column'><div>Polar<span class='polar'>G S T Y C</span></div><div>Neutral<span class='neutral'>Q N</span></div></div><div class='one-column'><div>Acidic<span class='acidic'>D E</span></div><div>Basic<span class='basic'>K R H</span></div></div></div><div>Hydrophobic<span class='hydrophobic'>A V L I P W F M</span></div>",
           "trackType": "ncats-sequence-logo",
           "data": [
             {

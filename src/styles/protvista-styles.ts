@@ -47,7 +47,7 @@ export default css`
     height: 0;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-left: 5px solid #333;
+    border-left: 5px solid #fff;
     margin-right: 5px;
     -webkit-transition: all 0.1s;
     /* Safari */

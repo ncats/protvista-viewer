@@ -35,7 +35,8 @@ export default css`
   }
 
   .category-label {
-    background-color: #b2f5ff;
+    background-color: #23364e;
+    color: white;
     cursor: pointer;
   }
 
@@ -66,13 +67,13 @@ export default css`
   }
 
   .track-label {
-    background-color: #d9faff;
+    background-color: #bdc3ca;
   }
 
   .track-instructions {    
     margin-left: 10px;
-    opacity: 0.5;
     font-size: small;
+    background-color: white;
   }
 
   protvista-track {
@@ -82,4 +83,30 @@ export default css`
   .feature {
     cursor: pointer;
   }
+  
+  .two-column-list {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .one-column {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+  }
+  
+  .polar, 
+  .neutral,
+  .basic,
+  .acidic,
+  .hydrophobic {
+    margin-left: 5px;
+    font-weight: 900;
+  }
+  
+  .polar { color: green; }
+  .neutral { color: purple; }
+  .basic { color: blue; }
+  .acidic { color: red; }
+  .hydrophobic { color: black; }
 `;

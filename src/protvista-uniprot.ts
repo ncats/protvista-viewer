@@ -508,7 +508,7 @@ class ProtvistaUniprot extends LitElement {
                                   `${category.name}-${track.name}`
                                 )
                               : track.label} 
-                            <div class="track-instructions">${track.instructions ? `${track.instructions}` : ''}</div>
+                            <div class="track-instructions">${track.instructions ? unsafeHTML(track.instructions) : ''}</div>
                           </div>
                           <div
                             class="track-content"
@@ -690,7 +690,7 @@ class ProtvistaUniprot extends LitElement {
         `;
       case 'ncats-sequence-logo':
         return html`
-        <ncats-sequence-logo height="100" length="${this.sequence?.length}"
+        <ncats-sequence-logo height="120" length="${this.sequence?.length}"
             displaystart="${this.displayCoordinates?.start}"
             displayend="${this.displayCoordinates?.end}"
             id="track-${id}"

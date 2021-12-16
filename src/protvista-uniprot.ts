@@ -334,12 +334,9 @@ class ProtvistaUniprot extends LitElement {
     this._loadData();
   }
 
-  renderedCallback;
-
   connectedCallback() {
     super.connectedCallback();
     this.registerWebComponents();
-    this.renderedCallback = this.getAttribute('renderedCallback');
 
     if (!this.suspend) this._init();
 
@@ -391,11 +388,6 @@ class ProtvistaUniprot extends LitElement {
         this.hasData = true;
       }
     });
-
-    if (this.renderedCallback) {
-      console.log(this.renderedCallback);
-      this.renderedCallback();
-    }
   }
 
   disconnectedCallback() {

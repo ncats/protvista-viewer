@@ -393,6 +393,7 @@ class ProtvistaUniprot extends LitElement {
     });
 
     if (this.renderedCallback) {
+      console.log(this.renderedCallback);
       this.renderedCallback();
     }
   }
